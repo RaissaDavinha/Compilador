@@ -16,7 +16,7 @@ public class Main {
 		int linha = 1;
 		char letra;
 		String id;
-		String num = null;
+		String num;
 		
 		
 		
@@ -38,21 +38,21 @@ public class Main {
 			}
 			
 			if (Character.isDigit(letra)) {
-				num += Character.toString(letra);
+				num = String.valueOf(letra);
 				pos++;
 				letra = readContent.charAt(pos);
 				
 				while(Character.isDigit(letra)) {
-					num += Character.toString(letra);
+					num = num + letra;
 					pos++;
 					letra = readContent.charAt(pos);
 				}
 				
 				token.setSimbolo("snumero");
 				token.setLexema(num);
-				tokens.add(token);
+//				tokens.add(token);
 				
-			} else {
+			}else {
 				if (Character.isLetter(letra)) {
 					id = String.valueOf(letra);
 					pos++;
@@ -65,66 +65,140 @@ public class Main {
 					}
 					token.setLexema(id);
 					
-//					switch
+					switch (id) {
+					case "programa":
+						token.setSimbolo("sprograma");
+						break;
+						
+					case "se":
+						token.setSimbolo("sse");
+						break;
+						
+					case "entao":
+						token.setSimbolo("sentao");
+						break;
+						
+					case "ssenao":
+						token.setSimbolo("sprograma");
+						break;
+						
+					case "enquanto":
+						token.setSimbolo("senquanto");
+						break;
+						
+					case "faca":
+						token.setSimbolo("sfaca");
+						break;
+					
+					case "inicio":
+						token.setSimbolo("sinicio");
+						break;
+						
+					case "fim":
+						token.setSimbolo("sfim");
+						break;
+						
+					case "escreva":
+						token.setSimbolo("sescreva");
+						break;
+						
+					case "leia":
+						token.setSimbolo("sleia");
+						break;
+						
+					case "var":
+						token.setSimbolo("svar");
+						break;
+						
+					case "inteiro":
+						token.setSimbolo("sinteiro");
+						break;
+					
+					case "booleano":
+						token.setSimbolo("sbooleano");
+						break;
+					
+					case "verdadeiro":
+						token.setSimbolo("sverdadeiro");
+						break;
+						
+					case "falso":
+						token.setSimbolo("sfalso");
+						break;
+						
+					case "procedimento":
+						token.setSimbolo("sprocedimento");
+						break;
+						
+					case "funcao":
+						token.setSimbolo("sfuncao");
+						break;
+						
+					case "div":
+						token.setSimbolo("sdiv");
+						break;
+						
+					case "e":
+						token.setSimbolo("se");
+						break;
+						
+					default:
+						token.setSimbolo("sidentificador");
+					}
 					
 				}else {
 					if (letra == ':') {
-//						Trata Atribuicao
+						if (readContent.charAt(pos + 1) == '=') {
+							num = ":=";
+							token.setLexema(num);
+							token.setSimbolo("satribuicao");
+							pos++;
+//							pos++;
+						}else {
+							num = ":";
+							token.setLexema(num);
+							token.setSimbolo("sdoispontos");
+//							pos++;
+						}
 					}else {
 						if (letra == '+' || letra == '-' || letra == '*') {
 //							Tratar Operador Aritmetico
-							id = null;
-							if (letra == '+') {
-								token.setSimbolo("smais");
-							} else {
-								if (letra == '-') {
-									token.setSimbolo("smenos");
-								} else {
-									if (letra == '*') {
-										token.setSimbolo("smult");
-									}
-								}
-							}
-							id = Character.toString(letra);
-							token.setLexema(id);
-							tokens.add(token);
 						}else {
 							if (letra == '<' || letra == '>' || letra == '=') {
-								id = null;
 //								Trata Operador Relacional
-								if (letra == '=') {
-									token.setSimbolo("sig");
-								} else {
-									if (letra == '>') {
-										if (readContent.charAt(pos+1) == '=') {
-											id += Character.toString(letra);
-											pos++;
-											letra = readContent.charAt(pos);
-											token.setSimbolo("smaiorig");	
-										} else {
-											token.setSimbolo("smaior");
-										}
-									} else {
-										if (readContent.charAt(pos+1) == '=') {
-											id += Character.toString(letra);
-											pos++;
-											letra = readContent.charAt(pos);
-											token.setSimbolo("smenorig");	
-										} else {
-											token.setSimbolo("smenor");
-										}
-									}
-								}
-								id += Character.toString(letra);
-								token.setLexema(id);
-								tokens.add(token);
 							}else {
 								if (letra == ';' || letra == ',' || letra == '(' || letra == ')' || letra == '.') {
 //									Trata Pontuacao
+									if(letra == ';') {
+										num = ";";
+										token.setLexema(num);
+										token.setSimbolo("sponto_virgula");
+									}
+									if(letra == ',') {
+										num = ",";
+										token.setLexema(num);
+										token.setSimbolo("svirgula");
+									}
+									if(letra == '(') {
+										num = "(";
+										token.setLexema(num);
+										token.setSimbolo("sabre_parenteses");
+									}
+									if(letra == ')') {
+										num = ")";
+										token.setLexema(num);
+										token.setSimbolo("sfecha_parenteses");
+									}
+									if(letra == '.') {
+										num = ".";
+										token.setLexema(num);
+										token.setSimbolo("sponto");
+									}
 								}
 							}
 						}
 					}
+//					Erro?
 				}
 			}
 			
