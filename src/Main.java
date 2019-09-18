@@ -96,19 +96,19 @@ public class Main {
 									token.setSimbolo("sig");
 								} else {
 									if (letra == '>') {
-										if (readContent.charAt(pos) == '=') {
+										if (readContent.charAt(pos+1) == '=') {
 											id += Character.toString(letra);
-											letra = readContent.charAt(pos);
 											pos++;
+											letra = readContent.charAt(pos);
 											token.setSimbolo("smaiorig");	
 										} else {
 											token.setSimbolo("smaior");
 										}
 									} else {
-										if (readContent.charAt(pos) == '=') {
+										if (readContent.charAt(pos+1) == '=') {
 											id += Character.toString(letra);
-											letra = readContent.charAt(pos);
 											pos++;
+											letra = readContent.charAt(pos);
 											token.setSimbolo("smenorig");	
 										} else {
 											token.setSimbolo("smenor");
