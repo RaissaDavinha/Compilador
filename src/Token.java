@@ -41,6 +41,7 @@ public class Token {
 				}else {
 					if (letra == '+' || letra == '-' || letra == '*') {
 //						Tratar Operador Aritmetico
+						
 					}else {
 						if (letra == '<' || letra == '>' || letra == '=') {
 //							Trata Operador Relacional

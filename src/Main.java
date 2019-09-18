@@ -16,7 +16,7 @@ public class Main {
 		int linha = 1;
 		char letra;
 		String id;
-		String num;
+		String num = null;
 		
 		
 		
@@ -38,12 +38,12 @@ public class Main {
 			}
 			
 			if (Character.isDigit(letra)) {
-				num = String.valueOf(letra);
+				num += Character.toString(letra);
 				pos++;
 				letra = readContent.charAt(pos);
 				
 				while(Character.isDigit(letra)) {
-					num = num + letra;
+					num += Character.toString(letra);
 					pos++;
 					letra = readContent.charAt(pos);
 				}
@@ -52,7 +52,7 @@ public class Main {
 				token.setLexema(num);
 				tokens.add(token);
 				
-			}else {
+			} else {
 				if (Character.isLetter(letra)) {
 					id = String.valueOf(letra);
 					pos++;
@@ -73,9 +73,51 @@ public class Main {
 					}else {
 						if (letra == '+' || letra == '-' || letra == '*') {
 //							Tratar Operador Aritmetico
+							id = null;
+							if (letra == '+') {
+								token.setSimbolo("smais");
+							} else {
+								if (letra == '-') {
+									token.setSimbolo("smenos");
+								} else {
+									if (letra == '*') {
+										token.setSimbolo("smult");
+									}
+								}
+							}
+							id = Character.toString(letra);
+							token.setLexema(id);
+							tokens.add(token);
 						}else {
 							if (letra == '<' || letra == '>' || letra == '=') {
+								id = null;
 //								Trata Operador Relacional
+								if (letra == '=') {
+									token.setSimbolo("sig");
+								} else {
+									if (letra == '>') {
+										if (readContent.charAt(pos) == '=') {
+											id += Character.toString(letra);
+											letra = readContent.charAt(pos);
+											pos++;
+											token.setSimbolo("smaiorig");	
+										} else {
+											token.setSimbolo("smaior");
+										}
+									} else {
+										if (readContent.charAt(pos) == '=') {
+											id += Character.toString(letra);
+											letra = readContent.charAt(pos);
+											pos++;
+											token.setSimbolo("smenorig");	
+										} else {
+											token.setSimbolo("smenor");
+										}
+									}
+								}
+								id += Character.toString(letra);
+								token.setLexema(id);
+								tokens.add(token);
 							}else {
 								if (letra == ';' || letra == ',' || letra == '(' || letra == ')' || letra == '.') {
 //									Trata Pontuacao
