@@ -11,32 +11,85 @@ public class Main {
 		BufferedReader reader = new BufferedReader(fileReader);
 		String readContent = reader.readLine();
 		List<Token> tokens = new ArrayList<Token>();
-		int count = 0;
+		Token token = new Token();
+		int pos = 0;
+		int linha = 1;
 		char letra;
+		String id;
+		String num;
+		
 		
 		
 		
 		while (readContent != null) {
-			letra = readContent.charAt(count);
+			letra = readContent.charAt(pos);
 			while((letra == '{') || (letra == ' ') || (readContent != null)) {
 				if (letra == '{') {
 					while(letra != '}' && readContent != null) {
-						count++;
-						letra = readContent.charAt(count);
+						pos++;
+						letra = readContent.charAt(pos);
 					}
 					while((letra == ' ') && readContent != null) {
-						count++;
-						letra = readContent.charAt(count);
+						pos++;
+						letra = readContent.charAt(pos);
 					}
 				}
 				
 			}
 			
-			//Pega Token
+			if (Character.isDigit(letra)) {
+				num = String.valueOf(letra);
+				pos++;
+				letra = readContent.charAt(pos);
+				
+				while(Character.isDigit(letra)) {
+					num = num + letra;
+					pos++;
+					letra = readContent.charAt(pos);
+				}
+				
+				token.setSimbolo("snumero");
+				token.setLexema(num);
+				tokens.add(token);
+				
+			}else {
+				if (Character.isLetter(letra)) {
+					id = String.valueOf(letra);
+					pos++;
+					letra = readContent.charAt(pos);
+					
+					while(letra == '_' || Character.isDigit(letra) || Character.isLetter(letra)) {
+						id = id + letra;
+						pos++;
+						letra = readContent.charAt(pos);
+					}
+					token.setLexema(id);
+					
+//					switch
+					
+				}else {
+					if (letra == ':') {
+//						Trata Atribuicao
+					}else {
+						if (letra == '+' || letra == '-' || letra == '*') {
+//							Tratar Operador Aritmetico
+						}else {
+							if (letra == '<' || letra == '>' || letra == '=') {
+//								Trata Operador Relacional
+							}else {
+								if (letra == ';' || letra == ',' || letra == '(' || letra == ')' || letra == '.') {
+//									Trata Pontuacao
+								}
+							}
+						}
+					}
+				}
+			}
 			
 			
 			readContent = reader.readLine();
-			count = 0;
+			pos = 0;
+			linha++;
 		}
 		
 		fileReader.close();
