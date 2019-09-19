@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Main {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, LexicoException {
 		FileReader fileReader = new FileReader("lexico.txt");
 		BufferedReader reader = new BufferedReader(fileReader);
 		String readContent = reader.readLine();
@@ -50,6 +50,7 @@ public class Main {
 				
 				token.setSimbolo("snumero");
 				token.setLexema(num);
+				token.setLinha(linha);
 //				tokens.add(token);
 				
 			}else {
@@ -64,6 +65,7 @@ public class Main {
 						letra = readContent.charAt(pos);
 					}
 					token.setLexema(id);
+					token.setLinha(linha);
 					
 					switch (id) {
 					case "programa":
@@ -152,12 +154,14 @@ public class Main {
 							num = ":=";
 							token.setLexema(num);
 							token.setSimbolo("satribuicao");
+							token.setLinha(linha);
 							pos++;
 //							pos++;
 						}else {
 							num = ":";
 							token.setLexema(num);
 							token.setSimbolo("sdoispontos");
+							token.setLinha(linha);
 //							pos++;
 						}
 					}else {
@@ -173,36 +177,42 @@ public class Main {
 										num = ";";
 										token.setLexema(num);
 										token.setSimbolo("sponto_virgula");
+										token.setLinha(linha);
 									}
 									if(letra == ',') {
 										num = ",";
 										token.setLexema(num);
 										token.setSimbolo("svirgula");
+										token.setLinha(linha);
 									}
 									if(letra == '(') {
 										num = "(";
 										token.setLexema(num);
 										token.setSimbolo("sabre_parenteses");
+										token.setLinha(linha);
 									}
 									if(letra == ')') {
 										num = ")";
 										token.setLexema(num);
 										token.setSimbolo("sfecha_parenteses");
+										token.setLinha(linha);
 									}
 									if(letra == '.') {
 										num = ".";
 										token.setLexema(num);
 										token.setSimbolo("sponto");
+										token.setLinha(linha);
 									}
+								}else {
+									throw new LexicoException("Erro Léxico na linha:" + linha);
 								}
 							}
 						}
 					}
-//					Erro?
 				}
 			}
 			
-			
+			tokens.add(token);
 			readContent = reader.readLine();
 			pos = 0;
 			linha++;
