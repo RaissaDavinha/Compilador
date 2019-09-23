@@ -44,7 +44,8 @@ public class Main {
 				while (controlCharacter == ' ') {
 					if (fileContentIndex < fileContent.length()) {
 						controlCharacter = fileContent.charAt(fileContentIndex);
-						fileContentIndex++;
+						if (controlCharacter == ' ')
+							fileContentIndex++;
 					} else {
 						break;
 					}
@@ -54,7 +55,8 @@ public class Main {
 					while (controlCharacter == '\n') {
 						if (fileContentIndex < fileContent.length()) {
 							controlCharacter = fileContent.charAt(fileContentIndex);
-							fileContentIndex++;
+							if (controlCharacter == '\n')
+								fileContentIndex++;
 						} else {
 							break;
 						}
@@ -95,11 +97,12 @@ public class Main {
 						} else {
 							if (Character.isLetter(controlCharacter) && controlCharacter != ';' && controlCharacter != ':') {
 								tokenBuilder = "";
-								while((controlCharacter == '_' || Character.isDigit(controlCharacter) || Character.isLetter(controlCharacter)) && controlCharacter != ';' && controlCharacter != ':') {
+								while((controlCharacter == '_' || Character.isDigit(controlCharacter) || Character.isLetter(controlCharacter)) && controlCharacter != ';' && controlCharacter != ':' && controlCharacter != '\n') {
 									tokenBuilder += controlCharacter;
 									if (fileContentIndex < fileContent.length()) {
 										controlCharacter = fileContent.charAt(fileContentIndex);
-										fileContentIndex++;
+										if ((controlCharacter == '_' || Character.isDigit(controlCharacter) || Character.isLetter(controlCharacter)) && controlCharacter != ';' && controlCharacter != ':' && controlCharacter != '\n')
+											fileContentIndex++;
 									} else {
 										break;
 									}
@@ -319,7 +322,12 @@ public class Main {
 		}
 			
 		for (int i = 0; i < tokens.size(); i++) {
-			System.out.print("<" + tokens.get(i).getSimbolo() + ">");
+			if (i > 0) {
+				if (tokens.get(i - 1).getLinha() < tokens.get(i).getLinha()) {
+					System.out.print('\n');
+				}
+			}
+			System.out.print("<" + tokens.get(i).getSimbolo() + "(" + tokens.get(i).getLexema() + ")" + ">");
 		}
 	}
 
