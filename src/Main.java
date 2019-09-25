@@ -7,7 +7,7 @@ import java.util.List;
 public class Main {
 
 	public static void main(String[] args) throws IOException, LexicoException {
-		FileReader fileReader = new FileReader("test1.txt");
+		FileReader fileReader = new FileReader("teste4.txt");
 		BufferedReader reader = new BufferedReader(fileReader);
 		String auxContent = null;
 		String fileContent = "";
@@ -16,7 +16,7 @@ public class Main {
 		int fileContentIndex = 0;
 		char controlCharacter;
 		String tokenBuilder;
-		
+		String teste;
 		
 		auxContent = reader.readLine();
 		while (auxContent != null) {
@@ -28,7 +28,9 @@ public class Main {
 		fileReader.close();
 		
 		System.out.print(fileContent);
+		auxContent = fileContent;
 		
+		fileContent = auxContent.replace("\t", "");
 	
 		
 		while (fileContentIndex < fileContent.length()) {
@@ -40,8 +42,8 @@ public class Main {
 			fileContentIndex++;
 			
 			// le todos os espaços
-			if (controlCharacter == ' ') {
-				while (controlCharacter == ' ') {
+			if (controlCharacter == ' ' || controlCharacter == '\t') {
+				while (controlCharacter == ' ' || controlCharacter == '\t') {
 					if (fileContentIndex < fileContent.length()) {
 						controlCharacter = fileContent.charAt(fileContentIndex);
 						if (controlCharacter == ' ')
