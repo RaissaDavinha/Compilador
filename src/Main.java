@@ -1,347 +1,273 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Main {
+	static int rotulo;
+	static Token token = new Token();
 
-	public static void main(String[] args) throws IOException, LexicoException {
-		FileReader fileReader = new FileReader("teste4.txt");
-		BufferedReader reader = new BufferedReader(fileReader);
-		String auxContent = null;
-		String fileContent = "";
-		List<Token> tokens = new ArrayList<Token>();
-		Token token = new Token();
-		int fileContentIndex = 0;
-		char controlCharacter;
-		String tokenBuilder;
-		String teste;
-		
-		auxContent = reader.readLine();
-		while (auxContent != null) {
-			fileContent += auxContent;
-			fileContent += '\n';
-			auxContent = reader.readLine();
-		}
+	public static void main(String[] args) throws IOException, LexicoException, SintaticoException {
 
-		fileReader.close();
-		
-		System.out.print(fileContent);
-		auxContent = fileContent;
-		
-		fileContent = auxContent.replace("\t", "");
-	
-		
-		while (fileContentIndex < fileContent.length()) {
-			
-			token = new Token();
-			
-			// le primeiro caracter
-			controlCharacter = fileContent.charAt(fileContentIndex);
-			fileContentIndex++;
-			
-			// le todos os espaços
-			if (controlCharacter == ' ' || controlCharacter == '\t') {
-				while (controlCharacter == ' ' || controlCharacter == '\t') {
-					if (fileContentIndex < fileContent.length()) {
-						controlCharacter = fileContent.charAt(fileContentIndex);
-						if (controlCharacter == ' ')
-							fileContentIndex++;
-					} else {
-						break;
-					}
-				}
-			} else {
-				if (controlCharacter == '\n') {
-					while (controlCharacter == '\n') {
-						if (fileContentIndex < fileContent.length()) {
-							controlCharacter = fileContent.charAt(fileContentIndex);
-							if (controlCharacter == '\n')
-								fileContentIndex++;
+		rotulo = 1;
+
+//		ver de pegar a lista de tokens
+		token = AnalisadorLexico.getToken();
+
+		if (token.simbolo == "sidentificador") {
+//			coloca na tabela(Azul)
+			token = AnalisadorLexico.getToken();
+			if (token.simbolo == "spontovirgula") {
+//				analisa bloco Ok
+				token = AnalisadorLexico.getToken(); 
+//				analisa_et OK
+				if (token.simbolo == "sidentificador") {
+					while (token.simbolo == "sidentificador") {
+//						analisa_variaveis Ok
+						do {
+							if (token.simbolo == "sidentificador") {
+//								Pesquisa_duplicvar_ tabela(token.lexema)
+//								if ("nao tiver duplicidade") {
+//								insere_tabela(token.lexema, “variável”) Azul
+									token = AnalisadorLexico.getToken();
+									if (token.simbolo == "svirgula" || token.simbolo == "sdoispontos") {
+										if (token.simbolo == "svirgula") {
+											token = AnalisadorLexico.getToken();
+											if (token.simbolo == "sdoispontos") {
+												throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+											}
+										}
+									} else {
+										throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+									}
+//								} else {
+//									throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+//								}
+							} else {
+								throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+							}
+
+						} while (token.simbolo == "sdoispontos");
+
+						token = AnalisadorLexico.getToken();
+//						analisa_tipo Ok
+						if (token.simbolo != "sinteiro" && token.simbolo != "sbooleano") {
+							throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
 						} else {
-							break;
+//							coloca_tipo_tabela(token.lexema)
+						}
+						token = AnalisadorLexico.getToken();
+
+						if (token.simbolo == "sponto_virgula") {
+							token = AnalisadorLexico.getToken();
+						} else {
+							throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
 						}
 					}
 				} else {
-					// ler comentario
-					if (controlCharacter == '{') {
-						// procura caracter de fim de comentario
-						while (controlCharacter != '}') {
-							// caso for fim de arquivo e n tiver fim de comentario
-							if (fileContentIndex < fileContent.length()) {
-								controlCharacter = fileContent.charAt(fileContentIndex);
-								fileContentIndex++;
-							} else {
-								throw new LexicoException("Sem fim de comentário na linha: " + returnLineOfToken(fileContentIndex - 1, fileContent));
+					throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+				}
+//				analisa_subrotinas Ok(rever codigo vermelho)
+				if (token.simbolo == "sprocedimento" || token.simbolo == "sfuncao") {
+//					codigo vermelho
+				}
+				while (token.simbolo == "sprocedimento" || token.simbolo == "sfuncao") {
+
+				}
+//				analisa_comandos Ok
+				if (token.simbolo == "sinicio") {
+					token = AnalisadorLexico.getToken();
+//					analisa comando simples Ok
+					analisaComandoSimples(token.simbolo);
+					while (token.simbolo != "sfim") {
+						if (token.simbolo == "spontovirgula") {
+							token = AnalisadorLexico.getToken();
+							if (token.simbolo != "sfim") {
+//								analisa comando simples Ok
+								analisaComandoSimples(token.simbolo);
 							}
-							
-						}
-						
-					} else {
-						if (Character.isDigit(controlCharacter)) {
-							tokenBuilder = "";
-							while(Character.isDigit(controlCharacter)) {
-								tokenBuilder = tokenBuilder + controlCharacter;
-								if (fileContentIndex < fileContent.length()) {
-									controlCharacter = fileContent.charAt(fileContentIndex);
-									fileContentIndex++;
-								} else {
-									break;
-								}
-							}
-							
-							token.setSimbolo("snumero");
-							token.setLexema(tokenBuilder);
-							token.setLinha(returnLineOfToken(fileContentIndex - 1, fileContent));
-							tokens.add(token);
-							
 						} else {
-							if (Character.isLetter(controlCharacter) && controlCharacter != ';' && controlCharacter != ':') {
-								tokenBuilder = "";
-								while((controlCharacter == '_' || Character.isDigit(controlCharacter) || Character.isLetter(controlCharacter)) && controlCharacter != ';' && controlCharacter != ':' && controlCharacter != '\n') {
-									tokenBuilder += controlCharacter;
-									if (fileContentIndex < fileContent.length()) {
-										controlCharacter = fileContent.charAt(fileContentIndex);
-										if ((controlCharacter == '_' || Character.isDigit(controlCharacter) || Character.isLetter(controlCharacter)) && controlCharacter != ';' && controlCharacter != ':' && controlCharacter != '\n')
-											fileContentIndex++;
-									} else {
-										break;
-									}
-								}
-								
-								token.setLexema(tokenBuilder);
-								token.setLinha(returnLineOfToken(fileContentIndex - 1, fileContent));
-								switch (tokenBuilder) {
-								case "programa":
-									token.setSimbolo("sprograma");
-									break;
-									
-								case "se":
-									token.setSimbolo("sse");
-									break;
-									
-								case "entao":
-									token.setSimbolo("sentao");
-									break;
-									
-								case "ssenao":
-									token.setSimbolo("sprograma");
-									break;
-									
-								case "enquanto":
-									token.setSimbolo("senquanto");
-									break;
-									
-								case "faca":
-									token.setSimbolo("sfaca");
-									break;
-								
-								case "inicio":
-									token.setSimbolo("sinicio");
-									break;
-									
-								case "fim":
-									token.setSimbolo("sfim");
-									break;
-									
-								case "escreva":
-									token.setSimbolo("sescreva");
-									break;
-									
-								case "leia":
-									token.setSimbolo("sleia");
-									break;
-									
-								case "var":
-									token.setSimbolo("svar");
-									break;
-									
-								case "inteiro":
-									token.setSimbolo("sinteiro");
-									break;
-								
-								case "booleano":
-									token.setSimbolo("sbooleano");
-									break;
-								
-								case "verdadeiro":
-									token.setSimbolo("sverdadeiro");
-									break;
-									
-								case "falso":
-									token.setSimbolo("sfalso");
-									break;
-									
-								case "procedimento":
-									token.setSimbolo("sprocedimento");
-									break;
-									
-								case "funcao":
-									token.setSimbolo("sfuncao");
-									break;
-									
-								case "div":
-									token.setSimbolo("sdiv");
-									break;
-									
-								case "e":
-									token.setSimbolo("se");
-									break;
-									
-								default:
-									token.setSimbolo("sidentificador");
-								}
-								tokens.add(token);
-							} else {
-								if (controlCharacter == ':') {
-									tokenBuilder = "";
-									if (fileContentIndex < fileContent.length()) {
-										if (fileContent.charAt(fileContentIndex) == '=') {
-											fileContentIndex++;
-											tokenBuilder = ":=";
-											token.setLexema(tokenBuilder);
-											token.setSimbolo("satribuicao");
-											token.setLinha(returnLineOfToken(fileContentIndex - 1, fileContent));
-											tokens.add(token);
-										}else {
-											tokenBuilder = ":";
-											token.setLexema(tokenBuilder);
-											token.setSimbolo("sdoispontos");
-											token.setLinha(returnLineOfToken(fileContentIndex - 1, fileContent));
-											tokens.add(token);
-										}
-									} else {
-										tokenBuilder = ":";
-										token.setLexema(tokenBuilder);
-										token.setSimbolo("sdoispontos");
-										token.setLinha(returnLineOfToken(fileContentIndex - 1, fileContent));
-										tokens.add(token);
-									}
-								} else {
-									if (controlCharacter == '+' || controlCharacter == '-' || controlCharacter == '*') {
-			//							Tratar Operador Aritmetico
-										tokenBuilder = "";
-										if (controlCharacter == '+') {
-											token.setSimbolo("smais");
-										} else {
-											if (controlCharacter == '-') {
-												token.setSimbolo("smenos");
-											} else {
-												if (controlCharacter == '*') {
-													token.setSimbolo("smult");
-												}
-											}
-										}
-										tokenBuilder = Character.toString(controlCharacter);
-										token.setLexema(tokenBuilder);
-										token.setLinha(returnLineOfToken(fileContentIndex - 1, fileContent));
-										tokens.add(token);
-									}else {
-										if (controlCharacter == '<' || controlCharacter == '>' || controlCharacter == '=') {
-			//								Trata Operador Relacional
-											tokenBuilder = "";
-											if (controlCharacter == '=') {
-												token.setSimbolo("sig");
-											} else {
-												if (controlCharacter == '>') {
-													if (fileContentIndex < fileContent.length()) {
-														if (fileContent.charAt(fileContentIndex) == '=') {
-															fileContentIndex++;
-															tokenBuilder += Character.toString(controlCharacter);
-															controlCharacter = fileContent.charAt(fileContentIndex);
-															token.setSimbolo("smaiorig");	
-														} else {
-															token.setSimbolo("smaior");
-														}
-													} else {
-														token.setSimbolo("smaior");
-													}
-												} else {
-													if (fileContentIndex < fileContent.length()) {
-														if (fileContent.charAt(fileContentIndex) == '=') {
-															fileContentIndex++;
-															tokenBuilder += Character.toString(controlCharacter);
-															controlCharacter = fileContent.charAt(fileContentIndex);
-															token.setSimbolo("smenorig");	
-														} else {
-															token.setSimbolo("smenor");
-														}
-													} else {
-														token.setSimbolo("smenor");
-													}
-												}
-											}
-											tokenBuilder += Character.toString(controlCharacter);
-											token.setLexema(tokenBuilder);
-											token.setLinha(returnLineOfToken(fileContentIndex - 1, fileContent));
-											tokens.add(token);
-										}else {
-											if (controlCharacter == ';' || controlCharacter == ',' || controlCharacter == '(' || controlCharacter == ')' || controlCharacter == '.') {
-			//									Trata Pontuacao
-												if(controlCharacter == ';') {
-													tokenBuilder = ";";
-													token.setLexema(tokenBuilder);
-													token.setSimbolo("sponto_virgula");
-													token.setLinha(returnLineOfToken(fileContentIndex - 1, fileContent));
-												}
-												if(controlCharacter == ',') {
-													tokenBuilder = ",";
-													token.setLexema(tokenBuilder);
-													token.setSimbolo("svirgula");
-													token.setLinha(returnLineOfToken(fileContentIndex - 1, fileContent));
-												}
-												if(controlCharacter == '(') {
-													tokenBuilder = "(";
-													token.setLexema(tokenBuilder);
-													token.setSimbolo("sabre_parenteses");
-													token.setLinha(returnLineOfToken(fileContentIndex - 1, fileContent));
-												}
-												if(controlCharacter == ')') {
-													tokenBuilder = ")";
-													token.setLexema(tokenBuilder);
-													token.setSimbolo("sfecha_parenteses");
-													token.setLinha(returnLineOfToken(fileContentIndex - 1, fileContent));
-												}
-												if(controlCharacter == '.') {
-													tokenBuilder = ".";
-													token.setLexema(tokenBuilder);
-													token.setSimbolo("sponto");
-													token.setLinha(returnLineOfToken(fileContentIndex - 1, fileContent));
-												}
-												tokens.add(token);
-											} else {
-												throw new LexicoException("Erro Léxico na linha:" + returnLineOfToken(fileContentIndex - 1, fileContent));
-											}
-										}
-									}
-								}
-							}
+							throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+						}
+						token = AnalisadorLexico.getToken();
+					}
+				} else {
+					throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+				}
+				if (token.simbolo == "sponto") {
+//					Verifica se acabou arquivo e comentarios(Nao deve precisar)
+				}
+			}
+
+		}
+	}
+
+	public static void analisaComandoSimples(String simbolo) throws IOException, SintaticoException, LexicoException {
+		switch (simbolo) {
+		case "sidentificador":
+//			Analisa_atrib_chprocedimento Ok
+			token = AnalisadorLexico.getToken();
+			if (token.simbolo == "satribuicao") {
+//				Analisa Atribuicao Fazer (token, expressao) Ok?
+				token = AnalisadorLexico.getToken();
+				analisaExpressao();
+			} else {
+//				chama procedimento Fazer
+			}
+			break;
+		case "sse":
+//			Analisa_se ok
+			token = AnalisadorLexico.getToken();
+//			Analisa_expressao Ok
+			analisaExpressao();
+			if (token.simbolo == "sentao") {
+				token = AnalisadorLexico.getToken();
+//				analisa_comando_simples Ok
+				analisaComandoSimples(token.simbolo);
+				if (token.simbolo == "ssenao") {
+					token = AnalisadorLexico.getToken();
+//					analisa_comando_simples Oka
+					analisaComandoSimples(token.simbolo);
+				}
+			}else {
+				throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+			}
+			break;
+		case "senquanto":
+//			Analisa_enquanto
+			
+//			Vermelho
+			token = AnalisadorLexico.getToken();
+//			Analisa_expressão Ok
+			analisaExpressao();
+			if (token.simbolo == "sfaca") {
+				token = AnalisadorLexico.getToken();
+//				analisa_expressao_simples Ok
+				analisaExpressaoSimples();
+				
+			}else {
+				throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+			}
+			break;
+		case "sleia":
+//			Analisa_leia Ok
+			token = AnalisadorLexico.getToken();
+			if (token.simbolo == "sabre_parenteses") {
+				token = AnalisadorLexico.getToken();
+				if (token.simbolo == "sidentificador") {
+//					if (pesquisa_declvar_tabela(token.lexema)) {
+//						Pesquisa em toda tabela
+						token = AnalisadorLexico.getToken();
+						if (token.simbolo == "sfecha_parenteses") {
+							token = AnalisadorLexico.getToken();
+						} else {
+							throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+						}
+//					}else {
+//						throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+//					}
+				} else {
+					throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+				}
+			} else {
+				throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+			}
+
+			break;
+			
+		case "sescreva":
+//			Analisa_ escreva Ok
+			token = AnalisadorLexico.getToken();
+			if (token.simbolo == "sabre_parenteses") {
+				token = AnalisadorLexico.getToken();
+				if (token.simbolo == "sidentificador") {
+//					Azul
+//					if (pesquisa_ declvarfunc_tabela(token.lexema)) {
+						token = AnalisadorLexico.getToken();
+						if (token.simbolo == "sfecha_parenteses") {
+							token = AnalisadorLexico.getToken();
+						} else {
+							throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+						}
+//					}else {
+//						throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+//					}
+				}else{
+						throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+					}
+			}else{
+					throw new SintaticoException("Erro Sintatico na linha:"+token.linha);
+				}
+			break;
+		}
+
+
+	}
+
+	public static void analisaFator() throws SintaticoException, IOException, LexicoException {
+		if (token.simbolo == "sidentificador") {
+//			Codigo azul
+		} else {
+			if (token.simbolo == "snumero") {
+				token = AnalisadorLexico.getToken();
+			} else {
+				if (token.simbolo == "snao") {
+					token = AnalisadorLexico.getToken();
+//					analisa_fator Ok
+					analisaFator();
+				} else {
+					if (token.simbolo == "sabre_parenteses") {
+						token = AnalisadorLexico.getToken();
+//						analisa_expressao Ok
+						analisaExpressao();
+						if (token.simbolo == "sfecha_parenteses") {
+							token = AnalisadorLexico.getToken();
+						} else {
+							throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+						}
+					} else {
+						if (token.lexema == "verdadeiro" || token.lexema == "falso") {
+							token = AnalisadorLexico.getToken();
+						} else {
+							throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
 						}
 					}
 				}
 			}
 		}
-			
-		for (int i = 0; i < tokens.size(); i++) {
-			if (i > 0) {
-				if (tokens.get(i - 1).getLinha() < tokens.get(i).getLinha()) {
-					System.out.print('\n');
-				}
-			}
-			System.out.print("<" + tokens.get(i).getSimbolo() + "(" + tokens.get(i).getLexema() + ")" + ">");
+	}
+	
+	public static void analisaExpressao() throws IOException, LexicoException, SintaticoException {
+		analisaExpressaoSimples();
+		if (token.simbolo == "smaior" || token.simbolo == "smaiorig" || token.simbolo == "sig" || token.simbolo == "smenor" || token.simbolo == "smenorig" || token.simbolo == "sdif" ){
+			token = AnalisadorLexico.getToken();
+			analisaExpressaoSimples();
 		}
+	}
+	
+public static void analisaExpressaoSimples() throws IOException, LexicoException, SintaticoException {
+	if (token.simbolo == "smais" || token.simbolo == "smenos") {
+		token = AnalisadorLexico.getToken();
+//		analisa_termo
+		
+		while(token.simbolo == "smais" || token.simbolo == "smenos" || token.simbolo == "sou") {
+			token = AnalisadorLexico.getToken();
+//			analisa_termo
+//			analisa_fator Ok
+			analisaFator();
+			while(token.simbolo == "smult" || token.simbolo == "sdiv" || token.simbolo == "se") {
+				token = AnalisadorLexico.getToken();
+//				analisa_fator Ok
+				analisaFator();
+			}
+		}
+	}
 	}
 
-	
-	static int returnLineOfToken(int fileContentIndex, String fileContent) {
-		int lineNumber;
-		int i;
-		for (lineNumber = 0, i = 0; i < fileContentIndex; i++) {
-			if (fileContent.charAt(i) == '\n') {
-				lineNumber++;
-			}
-		}
-		return lineNumber + 1;
+public static void analisaTermo() throws SintaticoException, IOException, LexicoException {
+	analisaFator();
+	while(token.simbolo == "smult" || token.simbolo == "sdiv" || token.simbolo == "se") {
+		token = AnalisadorLexico.getToken();
+		analisaFator();
 	}
+	
+}
+
 }

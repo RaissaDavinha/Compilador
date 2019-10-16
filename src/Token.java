@@ -1,5 +1,12 @@
 
 public class Token {
+	@Override
+	public String toString() {
+		return "Token [lexema=" + lexema + ", simbolo=" + simbolo + ", linha=" + linha + "]";
+	}
+
+
+
 	String lexema;
 	String simbolo;
 	int linha;
