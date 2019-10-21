@@ -5,89 +5,16 @@ public class Main {
 	static Token token = new Token();
 
 	public static void main(String[] args) throws IOException, LexicoException, SintaticoException {
-
 		rotulo = 1;
-
-//		ver de pegar a lista de tokens
 		token = AnalisadorLexico.getToken();
 
-		if (token.simbolo == "sidentificador") {
-//			coloca na tabela(Azul)
+		if (token.simbolo == "sprograma") {
 			token = AnalisadorLexico.getToken();
-			if (token.simbolo == "spontovirgula") {
-//				analisa bloco Ok
+			if (token.simbolo == "sidentificador") {
 				token = AnalisadorLexico.getToken(); 
-//				analisa_et OK
-				if (token.simbolo == "sidentificador") {
-					while (token.simbolo == "sidentificador") {
-//						analisa_variaveis Ok
-						do {
-							if (token.simbolo == "sidentificador") {
-//								Pesquisa_duplicvar_ tabela(token.lexema)
-//								if ("nao tiver duplicidade") {
-//								insere_tabela(token.lexema, “variável”) Azul
-									token = AnalisadorLexico.getToken();
-									if (token.simbolo == "svirgula" || token.simbolo == "sdoispontos") {
-										if (token.simbolo == "svirgula") {
-											token = AnalisadorLexico.getToken();
-											if (token.simbolo == "sdoispontos") {
-												throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
-											}
-										}
-									} else {
-										throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
-									}
-//								} else {
-//									throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
-//								}
-							} else {
-								throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
-							}
-
-						} while (token.simbolo == "sdoispontos");
-
-						token = AnalisadorLexico.getToken();
-//						analisa_tipo Ok
-						if (token.simbolo != "sinteiro" && token.simbolo != "sbooleano") {
-							throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
-						} else {
-//							coloca_tipo_tabela(token.lexema)
-						}
-						token = AnalisadorLexico.getToken();
-
-						if (token.simbolo == "sponto_virgula") {
-							token = AnalisadorLexico.getToken();
-						} else {
-							throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
-						}
-					}
-				} else {
-					throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
-				}
-//				analisa_subrotinas Ok(rever codigo vermelho)
-				if (token.simbolo == "sprocedimento" || token.simbolo == "sfuncao") {
-//					codigo vermelho
-				}
-				while (token.simbolo == "sprocedimento" || token.simbolo == "sfuncao") {
-
-				}
-//				analisa_comandos Ok
-				if (token.simbolo == "sinicio") {
-					token = AnalisadorLexico.getToken();
-//					analisa comando simples Ok
-					analisaComandoSimples(token.simbolo);
-					while (token.simbolo != "sfim") {
-						if (token.simbolo == "spontovirgula") {
-							token = AnalisadorLexico.getToken();
-							if (token.simbolo != "sfim") {
-//								analisa comando simples Ok
-								analisaComandoSimples(token.simbolo);
-							}
-						} else {
-							throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
-						}
-						token = AnalisadorLexico.getToken();
-					}
+				if (token.simbolo == "sponto_virgula") {
+					//comeca analisa_bloco
+					analisaBloco();
 				} else {
 					throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
 				}
@@ -96,6 +23,34 @@ public class Main {
 				}
 			}
 
+		}
+	}
+	
+	public static void analisaBloco() throws IOException, SintaticoException, LexicoException {
+		token = AnalisadorLexico.getToken();
+		analisaEtVariaveis();
+		analisaSubrotina();
+		analisaComando();
+	}
+	
+	public static void analisaComando() throws IOException, SintaticoException, LexicoException {
+		if (token.simbolo == "sinicio") {
+			token = AnalisadorLexico.getToken();
+			//analisa comando simples
+			analisaComandoSimples(token.simbolo);
+			while (token.simbolo != "sfim") {
+				if (token.simbolo == "sponto_virgula") {
+					token = AnalisadorLexico.getToken();
+					if (token.simbolo != "sfim") {
+						analisaComandoSimples(token.simbolo);
+					}
+				} else {
+					throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+				}
+				token = AnalisadorLexico.getToken();
+			}
+		} else {
+			throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
 		}
 	}
 
@@ -242,32 +197,132 @@ public class Main {
 		}
 	}
 	
-public static void analisaExpressaoSimples() throws IOException, LexicoException, SintaticoException {
-	if (token.simbolo == "smais" || token.simbolo == "smenos") {
-		token = AnalisadorLexico.getToken();
-//		analisa_termo
-		
-		while(token.simbolo == "smais" || token.simbolo == "smenos" || token.simbolo == "sou") {
+	public static void analisaExpressaoSimples() throws IOException, LexicoException, SintaticoException {
+		if (token.simbolo == "smais" || token.simbolo == "smenos") {
 			token = AnalisadorLexico.getToken();
-//			analisa_termo
-//			analisa_fator Ok
-			analisaFator();
-			while(token.simbolo == "smult" || token.simbolo == "sdiv" || token.simbolo == "se") {
+			analisaTermo();
+			while(token.simbolo == "smais" || token.simbolo == "smenos" || token.simbolo == "sou") {
 				token = AnalisadorLexico.getToken();
-//				analisa_fator Ok
-				analisaFator();
+				analisaTermo();
 			}
 		}
 	}
+
+	public static void analisaTermo() throws SintaticoException, IOException, LexicoException {
+		analisaFator();
+		while(token.simbolo == "smult" || token.simbolo == "sdiv" || token.simbolo == "se") {
+			token = AnalisadorLexico.getToken();
+			analisaFator();
+		}
 	}
 
-public static void analisaTermo() throws SintaticoException, IOException, LexicoException {
-	analisaFator();
-	while(token.simbolo == "smult" || token.simbolo == "sdiv" || token.simbolo == "se") {
-		token = AnalisadorLexico.getToken();
-		analisaFator();
+	public static void analisaEtVariaveis() throws SintaticoException, IOException, LexicoException {
+		if(token.simbolo == "svar") {
+			token = AnalisadorLexico.getToken();
+			if(token.simbolo == "sidentificador") {
+				while (token.simbolo == "sidentificador") {
+					analisaVariaveis();
+					token = AnalisadorLexico.getToken();
+					if (token.simbolo == "sponto_virgula") {
+						token = AnalisadorLexico.getToken();
+					} else {
+						throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+					}
+				}
+			}
+		}	
 	}
-	
+
+public static void analisaVariaveis() throws SintaticoException, IOException, LexicoException {
+	do {
+		if (token.simbolo == "sidentificador") {
+				token = AnalisadorLexico.getToken();
+				if (token.simbolo == "svirgula" || token.simbolo == "sdoispontos") {
+					if (token.simbolo == "svirgula") {
+						token = AnalisadorLexico.getToken();
+						if (token.simbolo == "sdoispontos") {
+							throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+						}
+					}
+				} else {
+					throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+				}
+//			} else {
+//				throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+//			}
+		} else {
+			throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+		}
+
+	} while (token.simbolo == "sdoispontos");
+	token = AnalisadorLexico.getToken();
+	//analisa_tipo
+	if (token.simbolo != "sinteiro" && token.simbolo != "sbooleano") {
+		throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+	} else {
+//		coloca_tipo_tabela(token.lexema)
+	}
+	token = AnalisadorLexico.getToken();
 }
 
+	public static void analisaSubrotina() throws SintaticoException, IOException, LexicoException {
+		if (token.simbolo == "sprocedimento" || token.simbolo == "sfuncao") {
+			while (token.simbolo == "sprocedimento" || token.simbolo == "sfuncao") {
+				if(token.simbolo == "sprocedimento") {
+					 analisa_declaração_procedimento();
+				} else {
+					analisa_declaração_funcao();
+				}
+				if(token.simbolo == "sponto_virgula") {
+					token = AnalisadorLexico.getToken();
+				} else {
+					throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+				}
+			}
+		}
+	}
+	
+	public static void analisa_declaração_procedimento() throws SintaticoException, IOException, LexicoException {
+		token = AnalisadorLexico.getToken();
+		if(token.simbolo =="sidentificador") {
+			token = AnalisadorLexico.getToken();
+			if(token.simbolo == "sponto_virgula") {
+				analisaBloco();
+			} else {
+				throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+			}
+		} else {
+			throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+		}
+	}
+	
+	public static void analisa_declaração_funcao() throws SintaticoException, IOException, LexicoException {
+		token = AnalisadorLexico.getToken();
+		if(token.simbolo =="sidentificador") {
+			token = AnalisadorLexico.getToken();
+			if(token.simbolo == "sdoispontos") {
+				token = AnalisadorLexico.getToken();
+				if(token.simbolo == "sinteiro" || token.simbolo == "sbooleano") {
+					token = AnalisadorLexico.getToken();
+					if(token.simbolo == "sponto_virgula") {
+						analisaBloco();
+					}
+				} else {
+					throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+				}
+			} else {
+				throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+			}
+		} else {
+			throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+		}
+	}
+	
+	public static void chamadaProcedimento() throws SintaticoException, IOException, LexicoException {
+		if(token.simbolo == "sponto_virgula") {
+			
+		} else {
+			throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
+		}
+	}
 }
