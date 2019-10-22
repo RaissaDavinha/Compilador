@@ -10,7 +10,18 @@ public class Token {
 	String lexema;
 	String simbolo;
 	int linha;
+	int coluna;
 	
+	
+	public int getColuna() {
+		return coluna;
+	}
+
+
+
+	public void setColuna(int coluna) {
+		this.coluna = coluna;
+	}
 	
 	public int getLinha() {
 		return linha;
