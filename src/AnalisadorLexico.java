@@ -345,9 +345,6 @@ public class AnalisadorLexico {
 			}
 		}
 		
-		token.setLinha(returnLineOfToken(fileContentIndex - 1, fileContent));
-		token.setColuna(returnEndColumnOfToken(fileContentIndex - 1, fileContent) - token.lexema.length());
-		
 		return token;
 		
 		

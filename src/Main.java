@@ -38,7 +38,7 @@ public class Main {
 						//comeca analisa_bloco
 						analisaBloco();
 						if (token.simbolo == "sponto") {
-							if(analisadorLexico.getToken() == null) {
+							if(analisadorLexico.getToken().getSimbolo() == "error") {
 								System.out.print("Compilado com sucesso");
 							} else {
 								throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
@@ -124,7 +124,8 @@ public class Main {
 	public static void analisaAtribChProcedimento() throws SintaticoException, IOException, LexicoException {
 		token = analisadorLexico.getToken();
 		if (token.simbolo == "satribuicao") {
-			// analisaAtribuicao();
+			token = analisadorLexico.getToken();
+			analisaExpressao();
 		} else {
 			chamadaProcedimento();
 		}
@@ -218,7 +219,7 @@ public class Main {
 				// se (TabSimb[ind].tipo == "funcao inteiro") ou (TabSimb[ind].tipo == "funcao  booleano")
 					// analisa_chamada_funcao
 				// senao
-					// Lexico(token)
+					token = analisadorLexico.getToken();
 			// senao ERRO
 		} else {
 			if (token.simbolo == "snumero") {
@@ -259,11 +260,11 @@ public class Main {
 	public static void analisaExpressaoSimples() throws IOException, LexicoException, SintaticoException {
 		if (token.simbolo == "smais" || token.simbolo == "smenos") {
 			token = analisadorLexico.getToken();
+		}
+		analisaTermo();
+		while(token.simbolo == "smais" || token.simbolo == "smenos" || token.simbolo == "sou") {
+			token = analisadorLexico.getToken();
 			analisaTermo();
-			while(token.simbolo == "smais" || token.simbolo == "smenos" || token.simbolo == "sou") {
-				token = analisadorLexico.getToken();
-				analisaTermo();
-			}
 		}
 	}
 
