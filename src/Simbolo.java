@@ -1,5 +1,5 @@
 public class Simbolo {
-//	int escopo;
+	//	int escopo;
 	String lexema;
 	String tipo;
 //	String memoria;
@@ -33,6 +33,5 @@ public class Simbolo {
 	public String toString() {
 		return "Simbolo [lexema=" + lexema + ", tipo=" + tipo + "]";
 	}
-	
 	
 }

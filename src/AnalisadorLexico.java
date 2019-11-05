@@ -89,7 +89,8 @@ public class AnalisadorLexico {
 					}
 
 				}
-
+				controlCharacter = fileContent.charAt(fileContentIndex);
+				fileContentIndex++;
 			}	
 		}
 		
