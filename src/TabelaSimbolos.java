@@ -37,15 +37,6 @@ public class TabelaSimbolos {
 		stackPointer++;
 	}
 
-	public boolean teste(String s1, String s2) {
-		if (s1.equals(s2)) {
-			System.out.println("igual");
-			return true;
-		}else {
-			System.out.println("not");
-			return false;
-		}
-	}
 
 	public boolean pesquisaDeclProc(String lexema) {
 		for (int i = 0; i < simbolos.size(); i++) {
