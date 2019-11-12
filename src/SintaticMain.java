@@ -1,13 +1,15 @@
 import java.io.IOException;
 
-public class Main {
+import javax.swing.SwingUtilities;
+
+public class SintaticMain {
 	static int rotulo;
 	static Token token = new Token();
 	static AnalisadorLexico analisadorLexico;
 	static TabelaSimbolos tabelaSimbolos = new TabelaSimbolos();
 	static String nivel;
 	
-	public static void main(String[] args) throws IOException, LexicoException, SintaticoException {
+	public static void sintaticMain() throws IOException, LexicoException, SintaticoException {
 		
 		try {
 			analisadorLexico = new AnalisadorLexico("oi.txt");
