@@ -1,0 +1,15 @@
+programa teste;
+
+var x,y,total: inteiro;
+
+funcao soma:inteiro;
+inicio
+  soma:= x+y;
+fim;
+
+inicio
+  leia(x);
+  leia(y);
+  total:= soma;
+  escreva(total)
+fim.
