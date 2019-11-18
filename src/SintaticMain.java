@@ -9,10 +9,9 @@ public class SintaticMain {
 	static TabelaSimbolos tabelaSimbolos = new TabelaSimbolos();
 	static String nivel;
 	
-	public static void sintaticMain() throws IOException, LexicoException, SintaticoException {
-		
+	public static void sintaticMain(String archive) throws IOException, LexicoException, SintaticoException {
 		try {
-			analisadorLexico = new AnalisadorLexico("oi.txt");
+			analisadorLexico = new AnalisadorLexico(archive);
 			
 			// teste lexico
 			//Token lastToken = null;
