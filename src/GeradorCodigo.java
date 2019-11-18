@@ -78,8 +78,28 @@ public class GeradorCodigo {
 		}
 		
 		for (int i = 0; i < auxPostFix.size(); i++) {
-			if (auxPostFix.get(i) != "sidentificador") {
-				
+//			Validar se for +,-, nao de sinal remover da lista
+			if (auxPostFix.get(i) != "sidentificador" && auxPostFix.get(i) != "sinteiro" && auxPostFix.get(i) != "sbooleano" && auxPostFix.get(i) != "svar") {
+				if (auxPostFix.get(i) == "smais" || auxPostFix.get(i) == "smenos" || auxPostFix.get(i) == "smult" || auxPostFix.get(i) == "sdiv") {
+					if (auxPostFix.get(i-1) == auxPostFix.get(i-2)) {
+						auxPostFix.remove(i);
+						auxPostFix.remove(i-1);
+						i = 0;
+					}else {
+//						erro
+					}
+				}else {
+					if (auxPostFix.get(i) == "smaiorig" || auxPostFix.get(i) == "smaior" || auxPostFix.get(i) == "smenorig" || auxPostFix.get(i) == "smenor" || auxPostFix.get(i) == "smenorig" || auxPostFix.get(i) == "smenor" || auxPostFix.get(i) == "sig" || auxPostFix.get(i) == "sdif") {
+						if (auxPostFix.get(i-1) == auxPostFix.get(i-2)) {
+							auxPostFix.remove(i);
+							auxPostFix.remove(i-1);
+							auxPostFix.set(i-2, "sbooleano");
+							i = 0;
+						}else {
+//							erro
+						}
+					}
+				}
 			}
 		}
 		return 1;
