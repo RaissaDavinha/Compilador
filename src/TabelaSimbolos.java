@@ -81,15 +81,12 @@ public class TabelaSimbolos {
 		return true;
 	}
 	
-	public String pesquisaTipo(String lexema) {
+	public boolean pesquisaTipo(String lexema) {
 		String tipo = "erro";
 		for (int i = 0; i < simbolos.size(); i++) {
 			if (lexema.equals(simbolos.get(i).getLexema())) {
 				tipo = simbolos.get(i).getTipo();
-				return tipo;
-			}else {
-//				Tratar na volta throw no erro
-				return tipo;
+				return false;
 			}
 			
 //			System.out.println("=======================");
@@ -97,7 +94,7 @@ public class TabelaSimbolos {
 //			System.out.println(simbolos.get(i).getLexema());
 //			System.out.println("=======================");
 		}
-		return tipo;
+		return true;
 
 	}
 	
