@@ -1,16 +1,16 @@
 public class Simbolo {
-	//	int escopo;
+	int nivel;
 	String lexema;
 	String tipo;
 //	String memoria;
 	
 	
-//	public int getEscopo() {
-//		return escopo;
-//	}
-//	public void setEscopo(int escopo) {
-//		this.escopo = escopo;
-//	}
+	public int getNivel() {
+		return nivel;
+	}
+	public void setNivel(int nivel) {
+		this.nivel = nivel;
+	}
 	public String getLexema() {
 		return lexema;
 	}

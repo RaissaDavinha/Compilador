@@ -13,7 +13,7 @@ public class GeradorCodigo {
 	int stackPointer = 0;
 	int label = 0;
 	int i;
-	
+
 
 	public void geraPostFix(ArrayList<Token> infix) throws SemanticoException {
 		int j = infix.size();
