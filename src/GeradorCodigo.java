@@ -162,115 +162,119 @@ public class GeradorCodigo {
 
 	
 
-	public void geraLdc() {
-
+		public void geraLdc(int k) {
+		codigoGerado += "LDC " + k +"\n"; 
 	}
 
-	public void geraLdv() {
-
+	public void geraLdv(int k) {
+		codigoGerado += "LDV " + k +"\n"; 
 	}
 
 	public void geraAdd() {
-
+		codigoGerado += "ADD" + "\n"; 
 	}
 
 	public void geraSub() {
-
+		codigoGerado += "SUB" + "\n"; 
 	}
 
 	public void geraMult() {
-
+		codigoGerado += "MULT" + "\n"; 
 	}
 
 	public void geraDiv() {
-
+		codigoGerado += "DIV" + "\n"; 
 	}
 
 	public void geraInv() {
-
+		codigoGerado += "INV" + "\n"; 
 	}
 
 	public void geraAnd() {
-
+		codigoGerado += "AND" + "\n"; 
 	}
 
 	public void geraOr() {
-
+		codigoGerado += "OR" + "\n"; 
 	}
 
 	public void geraNeg() {
-
+		codigoGerado += "NEG" + "\n"; 
 	}
 
 	public void geraCme() {
-
+		codigoGerado += "CME" + "\n"; 
 	}
 
 	public void geraCma() {
-
+		codigoGerado += "CMA" + "\n"; 
 	}
 
 	public void geraCeq() {
-
+		codigoGerado += "CEQ" + "\n"; 
 	}
 
 	public void geraCdif() {
-
+		codigoGerado += "CDIF" + "\n"; 
 	}
 
 	public void geraCmeq() {
-
+		codigoGerado += "CMEQ" + "\n"; 
 	}
 
 	public void geraCmaq() {
-
+		codigoGerado += "CMAQ" + "\n"; 
 	}
 
 	public void geraStart() {
-
+		codigoGerado += "START" + "\n";
 	}
 
 	public void geraHlt() {
-
+		codigoGerado += "HLT" + "\n";
 	}
 
-	public void geraStr() {
-
+	public void geraStr(int n) {
+		codigoGerado += "STR " + n + "\n"; 
 	}
 
-	public void geraJmp() {
-
+	public void geraJmp(String t) {
+		codigoGerado += "JMP " + t + "\n"; 
 	}
 
-	public void geraJmpF() {
-
+	public void geraJmpF(String t) {
+		codigoGerado += "JMPF " + t + "\n"; 
 	}
 
 	public void geraNull() {
-
+		codigoGerado += "NULL" + "\n"; 
 	}
 
 	public void geraRd() {
-
+		codigoGerado += "RD" + "\n"; 
 	}
 
 	public void geraPrn() {
-
+		codigoGerado += "PRN" + "\n"; 
 	}
 
-	public void geraAlloc() {
-
+	public void geraAlloc(int m, int n) {
+		codigoGerado += "ALLOC " + m + n + "\n"; 
 	}
 
-	public void geraDalloc() {
-
+	public void geraDalloc(int m, int n) {
+		codigoGerado += "DALLOC " + m + n + "\n"; 
 	}
 
-	public void geraCall() {
-
+	public void geraCall(String t) {
+		codigoGerado += "CALL " + t + "\n";
 	}
 
 	public void geraReturn() {
-
+		codigoGerado += "RETURN" + "\n";
+	}
+	public void geraLabel() {
+		codigoGerado += "L" + label + "\n";
+		label++;
 	}
 }
