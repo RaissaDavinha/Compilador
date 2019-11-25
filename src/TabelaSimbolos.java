@@ -33,6 +33,7 @@ public class TabelaSimbolos {
 	}
 
 	public boolean pesquisaTodaVar(String lexema) {
+		
 		for (int i = 0; i < simbolos.size(); i++) {
 			if (lexema.equals(simbolos.get(i).getLexema())) {
 				if (simbolos.get(i).getTipo() == "variavel") {
@@ -46,7 +47,7 @@ public class TabelaSimbolos {
 	}
 
 	public boolean pesquisaTodaTab(String lexema) {
-		System.out.println(simbolos);
+		
 		for (int i = 0; i < simbolos.size(); i++) {
 			if (lexema.equals(simbolos.get(i).getLexema())) {
 				return true;

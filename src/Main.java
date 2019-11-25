@@ -189,7 +189,6 @@ public class Main {
 		if (token.simbolo == "sabre_parenteses") {
 			token = analisadorLexico.getToken();
 			if (token.simbolo == "sidentificador") {
-				if (tabelaSimbolos.pesquisaDuplicaVar(token.lexema, nivel)) {
 //					Pesquisa em toda tabela ?
 					if (tabelaSimbolos.pesquisaTodaVar(token.lexema)) {
 						token = analisadorLexico.getToken();
@@ -204,11 +203,6 @@ public class Main {
 						throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema
 								+ ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
 					}
-
-				} else {
-					throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
-							+ " na linha:" + token.linha + ", coluna:" + token.coluna);
-				}
 			} else {
 				throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
 						+ " na linha:" + token.linha + ", coluna:" + token.coluna);
