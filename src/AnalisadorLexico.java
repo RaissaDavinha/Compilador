@@ -140,7 +140,7 @@ public class AnalisadorLexico {
 					token.setSimbolo("sentao");
 					break;
 
-				case "ssenao":
+				case "senao":
 					token.setSimbolo("ssenao");
 					break;
 
