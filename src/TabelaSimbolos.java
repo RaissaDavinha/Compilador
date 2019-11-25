@@ -19,44 +19,102 @@ public class TabelaSimbolos {
 		stackPointer++;
 	}
 
-	public boolean pesquisaDuplicaVar(String lexema, int nivel) {
-		for (int i = 0; i < simbolos.size(); i++) {
-			if (lexema.equals(simbolos.get(i).getLexema()) && nivel == simbolos.get(i).getNivel()) {
-				if (simbolos.get(i).getTipo() == "variavel") {
-					System.out.println("duplicado");
-					return false;
-				}
-			}
-		}
-
-		return true;
-	}
-
-	public boolean pesquisaTodaVar(String lexema) {
+	public boolean verificaDeclaDuplicVar(String lexema, ArrayList<Integer> nivelList) { // se encontrar declaração de variavel duplicada retorna true
+		int i = nivelList.size() - 1;
+		int j = 0;
 		
-		for (int i = 0; i < simbolos.size(); i++) {
-			if (lexema.equals(simbolos.get(i).getLexema())) {
-				if (simbolos.get(i).getTipo() == "variavel") {
-					System.out.println("duplicado");
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
-
-	public boolean pesquisaTodaTab(String lexema) {
-		
-		for (int i = 0; i < simbolos.size(); i++) {
-			if (lexema.equals(simbolos.get(i).getLexema())) {
+		while (j < simbolos.size()) {
+			if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && simbolos.get(j).tipo.equals("variavel")) {
 				return true;
+			} else {
+				j++;
 			}
 		}
-
+		j = 0;
+		do {
+			while (j < simbolos.size()) {
+				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && !simbolos.get(j).tipo.equals("variavel")) {
+					return true;
+				} else {
+					j++;
+				}
+			}
+			j = 0;
+			i--;
+		} while (i >= 0);
+		
 		return false;
 	}
-
+	
+	public boolean verificaDeclaDuplicProc(String lexema, ArrayList<Integer> nivelList) { // se encontrar declaração de variavel duplicada retorna true
+		int i = nivelList.size() - 1;
+		int j = 0;
+		
+		do {
+			while (j < simbolos.size()) {
+				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema)) {
+					return true;
+				} else {
+					j++;
+				}
+			}
+			j = 0;
+			i--;
+		} while (i >= 0);
+		
+		return false;
+	}
+	
+	public boolean verificaVarDeclarada(String lexema, int nivel) { // retorna true se ja estiver declarada
+		int i = 0;
+		
+		while (i < simbolos.size()) {
+			if (simbolos.get(i).nivel == nivel && lexema.equals(simbolos.get(i).lexema) && simbolos.get(i).tipo.equals("variavel")) {
+				return true;
+			} else {
+				i++;
+			}
+		}
+		return false;
+	}
+	public boolean verificaProcFuncDeclarada(String lexema, int nivel) { // retorna true se ja estiver declarada
+		int i = 0;
+		
+		while (i < simbolos.size()) {
+			if (simbolos.get(i).nivel == nivel && lexema.equals(simbolos.get(i).lexema) && !simbolos.get(i).tipo.equals("variavel") && !simbolos.get(i).tipo.equals("nomedeprograma")) {
+				return true;
+			} else {
+				i++;
+			}
+		}
+		return false;
+	}
+	public boolean verificaIndentificadorFuncao(String lexema, int nivel) {
+		int i = 0;
+		
+		while (i < simbolos.size()) {
+			if (simbolos.get(i).nivel == nivel && lexema.equals(simbolos.get(i).lexema) && simbolos.get(i).tipo.equals("funcao booleano") && simbolos.get(i).tipo.equals("funcao inteiro")) {
+				return true;
+			} else {
+				i++;
+			}
+		}
+		return false;
+	}
+	
+	public boolean verificaDeclaradoTudo(String lexema, int nivel) { // retorna true se ja estiver declarada
+		int i = 0;
+		
+		while (i < simbolos.size()) {
+			if (simbolos.get(i).nivel == nivel && lexema.equals(simbolos.get(i).lexema) && !simbolos.get(i).tipo.equals("nomedeprograma")) {
+				return true;
+			} else {
+				i++;
+			}
+		}
+		return false;
+	}
+	
 	public void colocaTipo(String tipo) {
 		Simbolo simbolo = new Simbolo();
 		simbolo.tipo = tipo;
@@ -65,43 +123,6 @@ public class TabelaSimbolos {
 		stackPointer++;
 	}
 
-	public boolean pesquisaDeclProc(String lexema, int nivel) {
-		for (int i = 0; i < simbolos.size(); i++) {
-			if (lexema.equals(simbolos.get(i).getLexema()) && simbolos.get(i).getNivel() == nivel) {
-				if (simbolos.get(i).getTipo() == "procedimento") {
-					System.out.println("duplicado");
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
-	public boolean pesquisaDeclFunc(String lexema, int nivel) {
-		for (int i = 0; i < simbolos.size(); i++) {
-			if (lexema.equals(simbolos.get(i).getLexema()) && simbolos.get(i).getNivel() == nivel) {
-				if (simbolos.get(i).getTipo() == "funcao") {
-					System.out.println("duplicado");
-					return false;
-				}
-			}
-		}
-		return true;
-	}
-
-	public boolean pesquisaTipo(String lexema) {
-		for (int i = 0; i < simbolos.size(); i++) {
-			if (lexema.equals(simbolos.get(i).getLexema())) {
-				return false;
-			}
-
-//			System.out.println("=======================");
-//			System.out.println(Lexema);
-//			System.out.println(simbolos.get(i).getLexema());
-//			System.out.println("=======================");
-		}
-		return true;
-
-	}
+	
 
 }

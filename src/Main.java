@@ -1,17 +1,18 @@
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Main {
 	static int rotulo;
 	static Token token = new Token();
 	static AnalisadorLexico analisadorLexico;
 	static TabelaSimbolos tabelaSimbolos = new TabelaSimbolos();
-	static int nivel = 0;
-	static int nivelAux = 0;
+	static ArrayList<Integer> nivelList = new ArrayList<Integer>();
+	static int nivelMax = 0;
 
 	public static void main(String[] args) throws IOException, LexicoException, SintaticoException, SemanticoException {
 
 		try {
-			analisadorLexico = new AnalisadorLexico("oi.txt");
+			analisadorLexico = new AnalisadorLexico("lexico.txt");
 
 //			 teste lexico
 //			Token lastToken = null;
@@ -31,12 +32,13 @@ public class Main {
 
 			rotulo = 1;
 			token = analisadorLexico.getToken();
+			nivelList.add(0);
 
 			if (token.simbolo == "sprograma") {
 				token = analisadorLexico.getToken();
 				if (token.simbolo == "sidentificador") {
 					// insere_table(token.lexema, "nomedeprograma","","");
-					tabelaSimbolos.insereTabela(token.lexema, "nomedeprograma", nivel);
+					tabelaSimbolos.insereTabela(token.lexema, "nomedeprograma", nivelList.get(nivelList.size() - 1));
 					token = analisadorLexico.getToken();
 					if (token.simbolo == "sponto_virgula") {
 						// comeca analisa_bloco
@@ -175,7 +177,7 @@ public class Main {
 			// Gera('', JMPF,rotulo,'') {salta se falso}
 			// rotulo := rotulo + 1
 			token = analisadorLexico.getToken();
-			analisaExpressaoSimples();
+			analisaComandoSimples();
 			// Gera('', JMPF,auxrot1,'') {retorna ao inicio loop}
 			// Gera(auxrot2, NULL,'','') {fim do while}
 		} else {
@@ -190,7 +192,7 @@ public class Main {
 			token = analisadorLexico.getToken();
 			if (token.simbolo == "sidentificador") {
 //					Pesquisa em toda tabela ?
-					if (tabelaSimbolos.pesquisaTodaVar(token.lexema)) {
+					if (tabelaSimbolos.verificaVarDeclarada(token.lexema, nivelList.get(nivelList.size() - 1))) {
 						token = analisadorLexico.getToken();
 
 						if (token.simbolo == "sfecha_parenteses") {
@@ -219,7 +221,7 @@ public class Main {
 		if (token.simbolo == "sabre_parenteses") {
 			token = analisadorLexico.getToken();
 			if (token.simbolo == "sidentificador") {
-				if (!tabelaSimbolos.pesquisaDuplicaVar(token.lexema, nivel)) {
+				if (tabelaSimbolos.verificaVarDeclarada(token.lexema, nivelList.get(nivelList.size() - 1))) {
 					token = analisadorLexico.getToken();
 					if (token.simbolo == "sfecha_parenteses") {
 						token = analisadorLexico.getToken();
@@ -243,13 +245,16 @@ public class Main {
 	public static void analisaFator() throws SintaticoException, IOException, LexicoException, SemanticoException {
 		if (token.simbolo == "sidentificador") {
 			// se pesquisaTabela(token.lexema, nivel, ind)
-			if (tabelaSimbolos.pesquisaTodaTab(token.getLexema())) {
-				// se (TabSimb[ind].tipo == "funcao inteiro") ou (TabSimb[ind].tipo == "funcao
-				// booleano")
+			if (tabelaSimbolos.verificaDeclaradoTudo(token.getLexema(), nivelList.get(nivelList.size() - 1))) {
+				// se (TabSimb[ind].tipo == "funcao inteiro") ou (TabSimb[ind].tipo == "funcao booleano")
+				if (tabelaSimbolos.verificaIndentificadorFuncao(token.getLexema(), nivelList.get(nivelList.size() - 1))) {
+					
 				// analisa_chamada_funcao
-				// senao ler token
-				token = analisadorLexico.getToken();
-			}else {
+				} else {
+					// senao ler token
+					token = analisadorLexico.getToken();	
+				}
+			} else {
 				throw new SemanticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
 						+ " na linha:" + token.linha + ", coluna:" + token.coluna);
 			}
@@ -334,8 +339,8 @@ public class Main {
 	public static void analisaVariaveis() throws SintaticoException, IOException, LexicoException {
 		do {
 			if (token.simbolo == "sidentificador") {
-				if (tabelaSimbolos.pesquisaDuplicaVar(token.lexema, nivel)) {
-					tabelaSimbolos.insereTabela(token.lexema, "variavel", nivel);
+				if (!tabelaSimbolos.verificaDeclaDuplicVar(token.lexema, nivelList)) {
+					tabelaSimbolos.insereTabela(token.lexema, "variavel", nivelList.get(nivelList.size() - 1));
 					token = analisadorLexico.getToken();
 					if (token.simbolo == "svirgula" || token.simbolo == "sdoispontos") {
 						if (token.simbolo == "svirgula") {
@@ -403,16 +408,16 @@ public class Main {
 	public static void analisaDeclaracaoProcedimento()
 			throws SintaticoException, IOException, LexicoException, SemanticoException {
 		token = analisadorLexico.getToken();
-		nivelAux++;
-		nivel = nivelAux;
+		nivelMax++;
+		nivelList.add(nivelMax);
 
 		if (token.simbolo == "sidentificador") {
 			// pesquisa_declproc_tabela(token.lexema)
-			if (tabelaSimbolos.pesquisaDeclProc(token.lexema, nivel)) {
+			if (!tabelaSimbolos.verificaDeclaDuplicProc(token.lexema, nivelList)) {
 				// se nao encontrou
 				// insere_tabela(token.lexema, "procedimento", nivel, rotulo) {guarda na
 				// TabSimb}
-				tabelaSimbolos.insereTabela(token.getLexema(), "procedimento", nivel);
+				tabelaSimbolos.insereTabela(token.getLexema(), "procedimento", nivelList.get(nivelList.size() - 1));
 
 				// Gera(rotulo,NULL,'','') {CALL ira buscar esse rotulo na TabSimb}
 				// rotulo := rotulo + 1
@@ -434,20 +439,19 @@ public class Main {
 					+ " na linha:" + token.linha + ", coluna:" + token.coluna);
 		}
 		// DESEMPILHA OU VOLTA NIVEL
-		nivel = 0;
+		nivelList.remove(nivelList.size() - 1);
 	}
 
 	public static void analisaDeclaracaoFuncao() throws SintaticoException, IOException, LexicoException, SemanticoException {
 		token = analisadorLexico.getToken();
 		// nivel := "L" (marca ou novo galho)
-		nivelAux++;
-		nivel = nivelAux;
+		nivelMax++;
+		nivelList.add(nivelMax);
 		if (token.simbolo == "sidentificador") {
-			// pesquisa_declfunc_tabela(token.lexema)
-			if (tabelaSimbolos.pesquisaDeclFunc(token.simbolo, nivel)) {
+			// pesquisa_declfunc_tabela(token.lexema) se tem identificador duplicado
+			if (!tabelaSimbolos.verificaDeclaDuplicProc(token.simbolo, nivelList)) {
 				// se nao encontrou
 				// insere_tabela
-				tabelaSimbolos.insereTabela(token.getLexema(), "funcao", nivel);
 
 				token = analisadorLexico.getToken();
 
@@ -456,9 +460,15 @@ public class Main {
 
 					if (token.simbolo == "sinteiro" || token.simbolo == "sbooleano") {
 						// se (token.simbolo = sinteiro)
-						// TABSIMG[pc].tipo := "funcao inteiro"
+						if (token.simbolo == "sinteiro") {
+							tabelaSimbolos.insereTabela(token.getLexema(), "funcao inteiro", nivelList.get(nivelList.size() - 1));
+							// TABSIMG[pc].tipo := "funcao inteiro"
+						}
 						// senao
-						// TABSIMG[pc].tipo := "funcao booleano"
+						if (token.simbolo == "sbooleano") {
+							tabelaSimbolos.insereTabela(token.getLexema(), "funcao booleano", nivelList.get(nivelList.size() - 1));
+							// TABSIMG[pc].tipo := "funcao booleano"
+						}
 
 						token = analisadorLexico.getToken();
 
@@ -482,7 +492,7 @@ public class Main {
 					+ " na linha:" + token.linha + ", coluna:" + token.coluna);
 		}
 		// DESEMPILHA OU VOLTA NIVEL
-		nivel = 0;
+		nivelList.remove(nivelList.size() - 1);
 	}
 
 	public static void chamadaProcedimento() throws SintaticoException, IOException, LexicoException {
