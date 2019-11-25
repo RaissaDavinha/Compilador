@@ -6,16 +6,16 @@ public class GeradorCodigo {
 //	String postFix;
 	ArrayList<Token> postFix;
 	String inFix;
-	String codigoGerado;
 //	ArrayList<Token> pilha = new ArrayList<>();
 //	Stack<Character> pilha = new Stack<>();
 	Stack<Token> pilha = new Stack<>();
 	int stackPointer = 0;
 	int label = 0;
 	int i;
-
-
-	public void geraPostFix(ArrayList<Token> infix) throws SemanticoException {
+	
+   56 + 9
+   56 9 +					
+	public void geraPostFix(ArrayList<Token> infix) {
 		int j = infix.size();
 
 		for (i = 0; i < j; i++) {
@@ -36,31 +36,29 @@ public class GeradorCodigo {
 				postFix.add(c);
 			} else {
 				if (c.getLexema() == "(") {
+//					Verificar se coloca os ()
 					pilha.push(c);
 					stackPointer++;
 				} else {
 					if (c.getLexema() == ")") {
-						while (!pilha.isEmpty() && pilha.peek().getLexema() != "(") {
-							postFix.add(pilha.pop());
-						}
-						if (!pilha.isEmpty() && pilha.peek().getLexema() != "(") {
-//							erro
-							throw new SemanticoException("Erro Semantico do token(Geração PostFix) <" + infix.get(i).simbolo + "(" + infix.get(i).lexema + ")>" + " na linha:" + infix.get(i).linha + ", coluna:" + infix.get(i).coluna);
-						} else {
-							pilha.pop();
+						while (!pilha.isEmpty() && pilha.peek().getLexema() != ")") {
+							if (pilha.peek().getLexema() != "(") {
+								postFix.add(pilha.pop());
+							}else {
+								pilha.pop();
+							}
+							
 						}
 					} else {
-//						operador
 						while (!pilha.isEmpty() && postOperand(c, flag) <= postOperand(pilha.peek(), flag)) {
 							if (pilha.peek().getLexema() == "(") {
 //								erro
-								throw new SemanticoException("Erro Semantico do token(Geração PostFix) <" + infix.get(i).simbolo + "(" + infix.get(i).lexema + ")>" + " na linha:" + infix.get(i).linha + ", coluna:" + infix.get(i).coluna);
 							}
 
-							postFix.add(pilha.pop());
+//							postFix.add(pilha.pop());
 						}
-						pilha.push(c);
 					}
+					pilha.push(c);
 				}
 			}
 			flag = 0;
@@ -69,51 +67,12 @@ public class GeradorCodigo {
 		while (!pilha.isEmpty()) {
 			if (pilha.peek().getLexema() == "(") {
 //				erro
-				throw new SemanticoException("Erro Semantico do token(Geração PostFix) <" + infix.get(i).simbolo + "(" + infix.get(i).lexema + ")>" + " na linha:" + infix.get(i).linha + ", coluna:" + infix.get(i).coluna);
 			}
 			postFix.add(pilha.pop());
 		}
 
 	}
 	
-	public static int validaPostFix(ArrayList<Token> postFix) throws SemanticoException {
-		ArrayList<String> auxPostFix = new ArrayList<>();
-		
-		for (int i = 0; i < postFix.size(); i++) {
-			auxPostFix.add(postFix.get(i).getSimbolo());
-		}
-		
-		for (int i = 0; i < auxPostFix.size(); i++) {
-//			Validar se for +,-, nao de sinal remover da lista
-			if (auxPostFix.get(i) != "sidentificador" && auxPostFix.get(i) != "sinteiro" && auxPostFix.get(i) != "sbooleano" && auxPostFix.get(i) != "svar") {
-				if (auxPostFix.get(i) == "smais" || auxPostFix.get(i) == "smenos" || auxPostFix.get(i) == "smult" || auxPostFix.get(i) == "sdiv") {
-					if (auxPostFix.get(i-1) == auxPostFix.get(i-2)) {
-						auxPostFix.remove(i);
-						auxPostFix.remove(i-1);
-						i = 0;
-					}else {
-//						erro
-						throw new SemanticoException("Erro Semantico do token(Validação PostFix) <" + postFix.get(i).simbolo + "(" + postFix.get(i).lexema + ")>" + " na linha:" + postFix.get(i).linha + ", coluna:" + postFix.get(i).coluna);
-					}
-				}else {
-					if (auxPostFix.get(i) == "smaiorig" || auxPostFix.get(i) == "smaior" || auxPostFix.get(i) == "smenorig" || auxPostFix.get(i) == "smenor" || auxPostFix.get(i) == "smenorig" || auxPostFix.get(i) == "smenor" || auxPostFix.get(i) == "sig" || auxPostFix.get(i) == "sdif") {
-						if (auxPostFix.get(i-1) == auxPostFix.get(i-2)) {
-							auxPostFix.remove(i);
-							auxPostFix.remove(i-1);
-							auxPostFix.set(i-2, "sbooleano");
-							i = 0;
-						}else {
-//							erro
-							throw new SemanticoException("Erro Semantico do token(Validação PostFix) <" + postFix.get(i).simbolo + "(" + postFix.get(i).lexema + ")>" + " na linha:" + postFix.get(i).linha + ", coluna:" + postFix.get(i).coluna);
-						}
-					}
-				}
-			}
-		}
-		return 1;
-	}
-	
-
 	public static int postOperand(Token token, int flag) {
 		String c = token.getLexema();
 		if (c == "+" && flag == 1|| c == "-" && flag == 1|| c == "nao" && flag == 1) {
@@ -145,119 +104,173 @@ public class GeradorCodigo {
 		return -1;
 	}
 
-	public void geraLdc(int k) {
-		codigoGerado += "LDC " + k +"\n"; 
+	public static int validaPostFix(ArrayList<Token> postFix) {
+		ArrayList<String> auxPostFix = new ArrayList<>();
+		
+		for (int i = 0; i < postFix.size(); i++) {
+			auxPostFix.add(postFix.get(i).getSimbolo());
+		}
+		
+		for (int i = 0; i < auxPostFix.size(); i++) {
+//			Validar se for +,-, nao de sinal remover da lista
+			if (auxPostFix.get(i) != "sidentificador" && auxPostFix.get(i) != "sinteiro" && auxPostFix.get(i) != "sbooleano" && auxPostFix.get(i) != "svar") {
+				if (auxPostFix.get(i) == "smais" || auxPostFix.get(i) == "smenos" || auxPostFix.get(i) == "smult" || auxPostFix.get(i) == "sdiv") {
+					if (auxPostFix.get(i-1) == auxPostFix.get(i-2) && auxPostFix.get(i-1) == "sinteiro") {
+						auxPostFix.remove(i);
+						auxPostFix.remove(i-1);
+						i = 0;
+					}else {
+//						erro
+					}
+				}else {
+					if (auxPostFix.get(i) == "smaiorig" || auxPostFix.get(i) == "smaior" || auxPostFix.get(i) == "smenorig" || auxPostFix.get(i) == "smenor" || auxPostFix.get(i) == "smenorig" || auxPostFix.get(i) == "smenor") {
+						if (auxPostFix.get(i-1) == auxPostFix.get(i-2) && auxPostFix.get(i-1) == "sinteiro") {
+							auxPostFix.remove(i);
+							auxPostFix.remove(i-1);
+							auxPostFix.set(i-2, "sbooleano");
+							i = 0;
+						}else {
+//							erro
+						}
+					}
+					if(auxPostFix.get(i) == "sou" || auxPostFix.get(i) == "se"){
+						if (auxPostFix.get(i-1) == auxPostFix.get(i-2) && auxPostFix.get(i-1) == "sbooleano") {
+							auxPostFix.remove(i);
+							auxPostFix.remove(i-1);
+							auxPostFix.set(i-2, "sbooleano");
+							i = 0;
+						}else {
+//							erro
+						}
+					}
+					if(auxPostFix.get(i) == "sig" || auxPostFix.get(i) == "sdif" ){
+						if (auxPostFix.get(i-1) == auxPostFix.get(i-2)) {
+							auxPostFix.remove(i);
+							auxPostFix.remove(i-1);
+							auxPostFix.set(i-2, "sbooleano");
+							i = 0;
+						}else {
+//							erro
+						}
+					}
+				}
+			}
+		}
+		return 1;
+	}
+	
+
+	
+
+	public void geraLdc() {
+
 	}
 
-	public void geraLdv(int k) {
-		codigoGerado += "LDV " + k +"\n"; 
+	public void geraLdv() {
+
 	}
 
 	public void geraAdd() {
-		codigoGerado += "ADD" + "\n"; 
+
 	}
 
 	public void geraSub() {
-		codigoGerado += "SUB" + "\n"; 
+
 	}
 
 	public void geraMult() {
-		codigoGerado += "MULT" + "\n"; 
+
 	}
 
 	public void geraDiv() {
-		codigoGerado += "DIV" + "\n"; 
+
 	}
 
 	public void geraInv() {
-		codigoGerado += "INV" + "\n"; 
+
 	}
 
 	public void geraAnd() {
-		codigoGerado += "AND" + "\n"; 
+
 	}
 
 	public void geraOr() {
-		codigoGerado += "OR" + "\n"; 
+
 	}
 
 	public void geraNeg() {
-		codigoGerado += "NEG" + "\n"; 
+
 	}
 
 	public void geraCme() {
-		codigoGerado += "CME" + "\n"; 
+
 	}
 
 	public void geraCma() {
-		codigoGerado += "CMA" + "\n"; 
+
 	}
 
 	public void geraCeq() {
-		codigoGerado += "CEQ" + "\n"; 
+
 	}
 
 	public void geraCdif() {
-		codigoGerado += "CDIF" + "\n"; 
+
 	}
 
 	public void geraCmeq() {
-		codigoGerado += "CMEQ" + "\n"; 
+
 	}
 
 	public void geraCmaq() {
-		codigoGerado += "CMAQ" + "\n"; 
+
 	}
 
 	public void geraStart() {
-		codigoGerado += "START" + "\n";
+
 	}
 
 	public void geraHlt() {
-		codigoGerado += "HLT" + "\n";
+
 	}
 
-	public void geraStr(int n) {
-		codigoGerado += "STR " + n + "\n"; 
+	public void geraStr() {
+
 	}
 
-	public void geraJmp(String t) {
-		codigoGerado += "JMP " + t + "\n"; 
+	public void geraJmp() {
+
 	}
 
-	public void geraJmpF(String t) {
-		codigoGerado += "JMPF " + t + "\n"; 
+	public void geraJmpF() {
+
 	}
 
 	public void geraNull() {
-		codigoGerado += "NULL" + "\n"; 
+
 	}
 
 	public void geraRd() {
-		codigoGerado += "RD" + "\n"; 
+
 	}
 
 	public void geraPrn() {
-		codigoGerado += "PRN" + "\n"; 
+
 	}
 
-	public void geraAlloc(int m, int n) {
-		codigoGerado += "ALLOC " + m + n + "\n"; 
+	public void geraAlloc() {
+
 	}
 
-	public void geraDalloc(int m, int n) {
-		codigoGerado += "DALLOC " + m + n + "\n"; 
+	public void geraDalloc() {
+
 	}
 
-	public void geraCall(String t) {
-		codigoGerado += "CALL " + t + "\n";
+	public void geraCall() {
+
 	}
 
 	public void geraReturn() {
-		codigoGerado += "RETURN" + "\n";
-	}
-	public void geraLabel() {
-		codigoGerado += "L" + label + "\n";
-		label++;
+
 	}
 }
