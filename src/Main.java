@@ -443,8 +443,7 @@ public class Main {
 		nivel = 0;
 	}
 
-	public static void analisaDeclaracaoFuncao()
-			throws SintaticoException, IOException, LexicoException, SemanticoException {
+	public static void analisaDeclaracaoFuncao() throws SintaticoException, IOException, LexicoException, SemanticoException {
 		token = analisadorLexico.getToken();
 		// nivel := "L" (marca ou novo galho)
 		nivelAux++;
