@@ -12,7 +12,7 @@ public class Main {
 	public static void main(String[] args) throws IOException, LexicoException, SintaticoException, SemanticoException {
 
 		try {
-			analisadorLexico = new AnalisadorLexico("lexico.txt");
+			analisadorLexico = new AnalisadorLexico("oi.txt");
 
 //			 teste lexico
 //			Token lastToken = null;
@@ -254,7 +254,7 @@ public class Main {
 					// senao ler token
 					token = analisadorLexico.getToken();	
 				}
-			} else {
+			}else {
 				throw new SemanticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
 						+ " na linha:" + token.linha + ", coluna:" + token.coluna);
 			}
@@ -496,6 +496,7 @@ public class Main {
 	}
 
 	public static void chamadaProcedimento() throws SintaticoException, IOException, LexicoException {
+//		System.out.println(token.simbolo);
 		if (token.simbolo == "sponto_virgula") {
 
 		} else {

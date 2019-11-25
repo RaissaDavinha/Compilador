@@ -24,7 +24,7 @@ public class TabelaSimbolos {
 		int j = 0;
 		
 		while (j < simbolos.size()) {
-			if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && simbolos.get(j).tipo.equals("variavel")) {
+			if (simbolos.get(j).nivel <= nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && simbolos.get(j).tipo.equals("variavel")) {
 				return true;
 			} else {
 				j++;
@@ -33,7 +33,7 @@ public class TabelaSimbolos {
 		j = 0;
 		do {
 			while (j < simbolos.size()) {
-				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && !simbolos.get(j).tipo.equals("variavel")) {
+				if (simbolos.get(j).nivel <= nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && !simbolos.get(j).tipo.equals("variavel")) {
 					return true;
 				} else {
 					j++;
@@ -52,7 +52,7 @@ public class TabelaSimbolos {
 		
 		do {
 			while (j < simbolos.size()) {
-				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema)) {
+				if (simbolos.get(j).nivel <= nivelList.get(i) && lexema.equals(simbolos.get(j).lexema)) {
 					return true;
 				} else {
 					j++;
@@ -69,7 +69,7 @@ public class TabelaSimbolos {
 		int i = 0;
 		
 		while (i < simbolos.size()) {
-			if (simbolos.get(i).nivel == nivel && lexema.equals(simbolos.get(i).lexema) && simbolos.get(i).tipo.equals("variavel")) {
+			if (simbolos.get(i).nivel <= nivel && lexema.equals(simbolos.get(i).lexema) && simbolos.get(i).tipo.equals("variavel")) {
 				return true;
 			} else {
 				i++;
@@ -81,7 +81,7 @@ public class TabelaSimbolos {
 		int i = 0;
 		
 		while (i < simbolos.size()) {
-			if (simbolos.get(i).nivel == nivel && lexema.equals(simbolos.get(i).lexema) && !simbolos.get(i).tipo.equals("variavel") && !simbolos.get(i).tipo.equals("nomedeprograma")) {
+			if (simbolos.get(i).nivel <= nivel && lexema.equals(simbolos.get(i).lexema) && !simbolos.get(i).tipo.equals("variavel") && !simbolos.get(i).tipo.equals("nomedeprograma")) {
 				return true;
 			} else {
 				i++;
@@ -93,7 +93,7 @@ public class TabelaSimbolos {
 		int i = 0;
 		
 		while (i < simbolos.size()) {
-			if (simbolos.get(i).nivel == nivel && lexema.equals(simbolos.get(i).lexema) && simbolos.get(i).tipo.equals("funcao booleano") && simbolos.get(i).tipo.equals("funcao inteiro")) {
+			if (simbolos.get(i).nivel <= nivel && lexema.equals(simbolos.get(i).lexema) && simbolos.get(i).tipo.equals("funcao booleano") && simbolos.get(i).tipo.equals("funcao inteiro")) {
 				return true;
 			} else {
 				i++;
@@ -104,9 +104,9 @@ public class TabelaSimbolos {
 	
 	public boolean verificaDeclaradoTudo(String lexema, int nivel) { // retorna true se ja estiver declarada
 		int i = 0;
-		
+		System.out.println(nivel);
 		while (i < simbolos.size()) {
-			if (simbolos.get(i).nivel == nivel && lexema.equals(simbolos.get(i).lexema) && !simbolos.get(i).tipo.equals("nomedeprograma")) {
+			if (simbolos.get(i).nivel <= nivel && lexema.equals(simbolos.get(i).lexema) && !simbolos.get(i).tipo.equals("nomedeprograma")) {
 				return true;
 			} else {
 				i++;

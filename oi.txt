@@ -1,15 +1,21 @@
 programa teste;
+ var x,y: inteiro;
 
-var x,y,total: inteiro;
-
-funcao soma:inteiro;
+procedimento p;
+ var z: inteiro;
 inicio
-  soma:= x+y;
-fim;
-
+ z:= x; 
+ x:=x-1;
+ se  z>1 
+  entao 
+   p;
+  senao  
+  y:=1;
+ y:=y*z
+ fim ;
+ 
 inicio
-  leia(x);
-  leia(y);
-  total:= soma;
-  escreva(total)
+ p;  
+ escreva (y);
+ escreva (x)
 fim.
