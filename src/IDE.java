@@ -2,10 +2,9 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-
 import javax.swing.JFrame;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -13,29 +12,26 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import java.awt.Font;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.awt.BorderLayout;
 
 @SuppressWarnings("serial")
 public class IDE extends JFrame{
 	private JPanel contentPane;
-	private JFrame frame;
 	String archive = null;
 	private JTextArea textArea = new JTextArea();
 	private JList<Integer> list = new JList<Integer>();
 	private JMenuBar menuBar = new JMenuBar();
 	private JMenuItem mntmNovo = new JMenuItem("Novo");
+	private String actualArchive = FileSystemView.getFileSystemView().getHomeDirectory().toString();
 
 	/**
 	 * Launch the application.
@@ -107,10 +103,10 @@ public class IDE extends JFrame{
 		JPanel pContainer = new JPanel();
 		pContainer.setLayout(new BorderLayout(0, 0));
 		
-		list.setFont(new Font("Dialog", Font.PLAIN, 12));
+		list.setFont(new Font("Dialog", Font.PLAIN, 13));
 		pContainer.add(list, BorderLayout.WEST);
 		
-		textArea.setFont(new Font("Dialog", Font.PLAIN, 14));
+		textArea.setFont(new Font("Dialog", Font.PLAIN, 15));
 		pContainer.add(textArea, BorderLayout.CENTER);
 		
 		JScrollPane scroll = new JScrollPane(pContainer);
@@ -121,54 +117,54 @@ public class IDE extends JFrame{
 	
 	private class botaoNovo implements ActionListener {
 		public void actionPerformed(ActionEvent arg0) {
+			JFileChooser j = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+			int r = j.showOpenDialog(null);
+			 
+			 if (r == JFileChooser.APPROVE_OPTION) {
+				 if(!j.getSelectedFile().exists()) {
+					 createFile(j.getSelectedFile().getAbsolutePath());
+					 actualArchive = j.getSelectedFile().getAbsolutePath();
+					 JOptionPane.showMessageDialog(contentPane, "Arquivo criado com sucesso!");
+					 showFile(j.getSelectedFile().getAbsolutePath());
+				 }
+			 } else {
+				 //arquivo ja existe
+				 JOptionPane.showMessageDialog(contentPane, "Arquivo com esse nome ja existente");
+			 }
 			
 		}
 	}
 	
 	private class botaoSalvar implements ActionListener {
 		public void actionPerformed(ActionEvent arg0) {
-			JFileChooser j = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory()); 
+			JFileChooser j = new JFileChooser(actualArchive); 
             int r = j.showSaveDialog(null); 
   
             if (r == JFileChooser.APPROVE_OPTION){ 
                 //show success
+            	JOptionPane.showMessageDialog(contentPane, "Arquivo salvo com sucesso!");
             }
 		}
 	}
 	
 	private class botaoImportar implements ActionListener {
 		public void actionPerformed(ActionEvent arg0) {
-			DefaultListModel<Integer> model = new DefaultListModel<Integer>();
-			JFileChooser j = new JFileChooser("oi.txt");  
-			 int r = j.showOpenDialog(null);
+			JFileChooser j = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+			if (actualArchive != null) {
+				j = new JFileChooser(actualArchive);
+			}
+			int r = j.showOpenDialog(null);
 			 
-			 if (r == JFileChooser.APPROVE_OPTION) 
-	            {
-	                archive = j.getSelectedFile().getAbsolutePath();
-	                System.out.println(archive);
-	                FileReader fileReader;
-					try {
-						fileReader = new FileReader(archive);
-						BufferedReader reader = new BufferedReader(fileReader);
-		                String fileContent = "";
-		                int fileContentIndex = 0;
-		        		String auxContent = reader.readLine();
-		        		
-		        		while (auxContent != null) {
-		        			fileContent += auxContent;
-		        			fileContent += '\n';
-		        			auxContent = reader.readLine();
-		        			model.addElement(fileContentIndex);
-		        			list.setModel(model);
-		        			fileContentIndex++;
-		        		}
-		        		fileReader.close();
-		        		textArea.setText(fileContent);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-	            } 
+			if (r == JFileChooser.APPROVE_OPTION) {
+				actualArchive = j.getSelectedFile().getAbsolutePath();
+				
+				if(j.getSelectedFile().exists()) {
+					showFile(actualArchive);
+				} else {
+					createFile(actualArchive);
+					showFile(actualArchive);
+				}   
+	        } 
 		}
 	}
 	
@@ -193,7 +189,51 @@ public class IDE extends JFrame{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			} //mostrar erro caso contrario 
+			} else {
+				//mostrar erro caso contrario 
+				JOptionPane.showMessageDialog(null, "Arquivo nao encontrado ou vazio", "Erro", JOptionPane.ERROR_MESSAGE);
+				
+			}
+		}
+	}
+	
+	private void showFile(String archive) {
+        System.out.println(archive);
+        DefaultListModel<Integer> model = new DefaultListModel<Integer>();
+        list.setModel(model);
+        FileReader fileReader;
+			try {
+				fileReader = new FileReader(archive);
+				BufferedReader reader = new BufferedReader(fileReader);
+               String fileContent = "";
+               int fileContentIndex = 0;
+       		String auxContent = reader.readLine();
+       		
+       		while (auxContent != null) {
+       			fileContent += auxContent;
+       			fileContent += '\n';
+       			auxContent = reader.readLine();
+       			model.addElement(fileContentIndex);
+       			list.setModel(model);
+       			fileContentIndex++;
+       		}
+       		fileReader.close();
+       		textArea.setText(fileContent);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
+	
+	private void createFile(String name) {
+		File file = new File(name);
+	    try {
+	    	if(file.createNewFile()){
+	    		System.out.println("File Created");
+			}else System.out.println("File already exists in the directory");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }
