@@ -265,6 +265,9 @@ public class IDE extends JFrame{
 				} catch (SintaticoException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} catch (SemanticoException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			} else {
 				//mostrar erro caso contrario 
