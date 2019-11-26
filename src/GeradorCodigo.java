@@ -438,7 +438,6 @@ public class GeradorCodigo {
 					break;
 					
 				case "smaior":
-					System.out.println("ola");
 					this.geraCma();
 					break;
 					

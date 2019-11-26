@@ -574,7 +574,7 @@ public class Main {
 				
 				// insere_tabela(token.lexema, "procedimento", nivel, rotulo) {guarda na TabSimb}
 				tabelaSimbolos.insereTabela(token.getLexema(), "procedimento", nivelList.get(nivelList.size() - 1), rotulo++);
-
+				System.out.println(rotulo);
 				// Gera(rotulo,NULL,'','') {CALL ira buscar esse rotulo na TabSimb}
 				geradorCodigo.geraNull(rotulo);
 				
@@ -657,9 +657,10 @@ public class Main {
 	}
 
 	public static void chamadaProcedimento() throws SintaticoException, IOException, LexicoException {
+		System.out.println(token.getLexema());
 		if (token.simbolo == "sponto_virgula") {
 			// gera codigo call para label do procedimento
-			System.out.println(token.getLexema());
+//			System.out.println(token.getLexema());
 			geradorCodigo.geraCall(tabelaSimbolos.returnProcFuncRotulo(token.lexema, nivelList));
 		} else {
 			throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
