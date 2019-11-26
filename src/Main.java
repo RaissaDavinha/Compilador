@@ -22,7 +22,7 @@ public class Main {
 	public static void main(String[] args) throws IOException, LexicoException, SintaticoException, SemanticoException {
 
 		try {
-			analisadorLexico = new AnalisadorLexico("testeRafa.txt");
+			analisadorLexico = new AnalisadorLexico("testeRafa2.txt");
 			geradorCodigo = new GeradorCodigo();
 			procFuncRotuloStack = new ArrayList<Integer>();
 			allocStack = new ArrayList<Integer>();
@@ -197,8 +197,12 @@ public class Main {
 				throw new SemanticoException("Erro Semantico do token <" + token.simbolo + "(" + token.lexema
 						+ ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
 			}
+
+			ArrayList<Token> auxPostfix = new ArrayList<Token>();
+			for (Token item : postfixList) auxPostfix.add(new Token(item));
 			
-			ArrayList<Token> auxPostfix =(ArrayList<Token>) postfixList.clone();
+			
+			
 			
 			if (auxToken.simbolo == "variavel inteiro") {
 				if (!geradorCodigo.validaPostFixInteiro(auxPostfix)) {
@@ -230,14 +234,16 @@ public class Main {
 						// dar return de funcao
 						int allocQtd = 0;
 						int allocStart = 0;
-						for (int dallocIndex = allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex > 0; dallocIndex--) {
-							// geradorCodigo.geraDalloc(allocStack.get(allocStack.size() - 2), allocStack.get(allocStack.size() - 1));
-							allocQtd += allocStack.get(allocStack.size() - 1);
-							allocStack.remove(allocStack.size() - 1);
-							allocStart = allocStack.get(allocStack.size() - 1);
-							allocStack.remove(allocStack.size() - 1);
+						if (allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1) > 0) {
+							for (int dallocIndex = allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex > 0; dallocIndex--) {
+								// geradorCodigo.geraDalloc(allocStack.get(allocStack.size() - 2), allocStack.get(allocStack.size() - 1));
+								allocQtd += allocStack.get(allocStack.size() - 1);
+								allocStack.remove(allocStack.size() - 1);
+								allocStart = allocStack.get(allocStack.size() - 1);
+								allocStack.remove(allocStack.size() - 1);
+							}
+							allocPerFuncProcStack.remove(allocPerFuncProcStack.size() - 1);
 						}
-						allocPerFuncProcStack.remove(allocPerFuncProcStack.size() - 1);
 						geradorCodigo.geraReturnF(allocStart, allocQtd);
 					} else {
 						if (auxToken.simbolo == "funcao booleano") {
@@ -252,14 +258,16 @@ public class Main {
 							// dar return de funcao
 							int allocQtd = 0;
 							int allocStart = 0;
-							for (int dallocIndex = allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex > 0; dallocIndex--) {
-								// geradorCodigo.geraDalloc(allocStack.get(allocStack.size() - 2), allocStack.get(allocStack.size() - 1));
-								allocQtd += allocStack.get(allocStack.size() - 1);
-								allocStack.remove(allocStack.size() - 1);
-								allocStart = allocStack.get(allocStack.size() - 1);
-								allocStack.remove(allocStack.size() - 1);
+							if (allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1) > 0) {
+								for (int dallocIndex = allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex > 0; dallocIndex--) {
+									// geradorCodigo.geraDalloc(allocStack.get(allocStack.size() - 2), allocStack.get(allocStack.size() - 1));
+									allocQtd += allocStack.get(allocStack.size() - 1);
+									allocStack.remove(allocStack.size() - 1);
+									allocStart = allocStack.get(allocStack.size() - 1);
+									allocStack.remove(allocStack.size() - 1);
+								}
+								allocPerFuncProcStack.remove(allocPerFuncProcStack.size() - 1);
 							}
-							allocPerFuncProcStack.remove(allocPerFuncProcStack.size() - 1);
 							geradorCodigo.geraReturnF(allocStart, allocQtd);
 						} else {
 							throw new SemanticoException("Erro Semantico do token <" + token.simbolo + "(" + token.lexema
@@ -289,7 +297,8 @@ public class Main {
 		}
 		System.out.println("");
 		
-		ArrayList<Token> auxPostfix =(ArrayList<Token>) postfixList.clone();
+		ArrayList<Token> auxPostfix = new ArrayList<Token>();
+		for (Token item : postfixList) auxPostfix.add(new Token(item));
 		
 		
 		if (!geradorCodigo.validaPostFixBooleano(auxPostfix)) {
@@ -680,11 +689,12 @@ public class Main {
 				if (token.simbolo == "sponto_virgula") {
 					analisaBloco();
 					
-					
-					for (int dallocIndex = allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex > 0; dallocIndex--) {
-						geradorCodigo.geraDalloc(allocStack.get(allocStack.size() - 2), allocStack.get(allocStack.size() - 1));
-						allocStack.remove(allocStack.size() - 1);
-						allocStack.remove(allocStack.size() - 1);
+					if (allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1) > 0) {
+						for (int dallocIndex = allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex > 0; dallocIndex--) {
+							geradorCodigo.geraDalloc(allocStack.get(allocStack.size() - 2), allocStack.get(allocStack.size() - 1));
+							allocStack.remove(allocStack.size() - 1);
+							allocStack.remove(allocStack.size() - 1);
+						}
 					}
 					allocPerFuncProcStack.remove(allocPerFuncProcStack.size() - 1);
 					geradorCodigo.geraReturn();
@@ -778,7 +788,6 @@ public class Main {
 	public static void chamadaFuncao() throws SintaticoException, IOException, LexicoException {
 		token = analisadorLexico.getToken();
 		if (token.simbolo == "sponto_virgula") {
-			token = analisadorLexico.getToken();
 		} else {
 			throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
 					+ " na linha:" + token.linha + ", coluna:" + token.coluna);

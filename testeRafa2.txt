@@ -1,0 +1,18 @@
+programa test2;
+
+var a,b: inteiro;
+
+{func 1}
+funcao func1: inteiro;
+inicio
+  se a>5 entao
+	func1:=a * 2
+  senao
+	func1:=a* 10;
+fim;
+
+inicio
+	leia(a);
+	b:=5*3+func1;
+	escreva(b);
+fim.

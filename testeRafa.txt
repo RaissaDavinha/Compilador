@@ -28,6 +28,5 @@ inicio
 fim;
 
 inicio
-    analisa1;
 	z:=func1;
 fim.

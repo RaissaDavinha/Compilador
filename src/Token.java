@@ -5,6 +5,14 @@ public class Token {
 	int linha;
 	int coluna;
 	
+	public Token(Token token) {
+		this.lexema = token.lexema;
+		this.simbolo = token.simbolo;
+		this.linha = token.linha;
+		this.coluna = token.coluna;
+	}
+	public Token() {
+	}
 	
 	public int getColuna() {
 		return coluna;
