@@ -11,11 +11,6 @@ public class TabelaSimbolos {
 		simbolo.tipo = tipo;
 		simbolo.nivel = nivel;
 		simbolos.add(simbolo);
-//		simbolos.add(stackPointer, simbolo);
-//			System.out.println("---------------------------------");
-//			System.out.println(simbolos.get(stackPointer));
-//			System.out.println("---------------------------------");
-		System.out.println();
 		stackPointer++;
 	}
 
@@ -122,7 +117,7 @@ public class TabelaSimbolos {
 		do {
 			while (j < simbolos.size()) {
 				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && simbolos.get(j).tipo.contains("variavel")) {
-					if (simbolos.get(i).tipo.equals("variavel inteiro")) {
+					if (simbolos.get(j).tipo.equals("variavel inteiro")) {
 						return true;
 					} else {
 						return false;

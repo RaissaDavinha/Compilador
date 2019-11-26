@@ -78,16 +78,26 @@ public class GeradorCodigo {
 								} else {
 									if (postfixStack.get(postfixStack.size() - 1).simbolo == "sabre_parenteses") {
 										postfixStack.add(infix.get(infixIndex));
-									}
-									while (postfixStack.size() > 0) {
+									} else {
 										if (postOperand(infix.get(infixIndex)) <= postOperand(postfixStack.get(postfixStack.size() - 1))) {
 											postFix.add(postfixStack.get(postfixStack.size() - 1));
 											postfixStack.remove(postfixStack.size() - 1);
+											while (postfixStack.size() > 0) {
+												if (postfixStack.get(postfixStack.size() - 1).simbolo == "sabre_parenteses") {
+													break;
+												}
+												if (postOperand(infix.get(infixIndex)) <= postOperand(postfixStack.get(postfixStack.size() - 1))) {
+													postFix.add(postfixStack.get(postfixStack.size() - 1));
+													postfixStack.remove(postfixStack.size() - 1);
+												} else {
+													break;
+												}
+											}
+											postfixStack.add(infix.get(infixIndex));
 										} else {
-											break;
+											postfixStack.add(infix.get(infixIndex));
 										}
 									}
-									postfixStack.add(infix.get(infixIndex));
 								}
 							}
 						}
@@ -290,7 +300,7 @@ public class GeradorCodigo {
 						return false;
 					}
 				} else {
-					if (postFix.get(postFixIndex - 1).simbolo == "sig" || postFix.get(postFixIndex - 1).simbolo == "sdif") {
+					if (postFix.get(postFixIndex).simbolo == "sig" || postFix.get(postFixIndex).simbolo == "sdif") {
 						if (postFix.get(postFixIndex - 1).simbolo == "variavel booleano" || postFix.get(postFixIndex - 1).simbolo == "funcao booleano" || postFix.get(postFixIndex - 1).simbolo == "sverdadeiro"
 								|| postFix.get(postFixIndex - 1).simbolo == "sfalso") {
 							if (postFix.get(postFixIndex - 2).simbolo == "variavel booleano" || postFix.get(postFixIndex - 2).simbolo == "funcao booleano" || postFix.get(postFixIndex - 2).simbolo == "sverdadeiro"
