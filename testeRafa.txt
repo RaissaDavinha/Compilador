@@ -2,6 +2,7 @@ programa test1;
 
 var a,b,c: inteiro;
        z: booleano;
+	   y: inteiro;
        
 {proc 1}
 procedimento analisa1;
@@ -15,6 +16,18 @@ inicio
   escreva(a)
 fim;
 
+{func 1}
+funcao func1: booleano;
+var a1, a2, a3: booleano;
+	b1, b2: inteiro;
+	c1: booleano;
+inicio
+  leia(a1);
+  escreva(a1);
+  func1:=a1;
+fim;
+
 inicio
     analisa1;
+	z:=func1;
 fim.

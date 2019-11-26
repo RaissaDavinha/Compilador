@@ -5,7 +5,7 @@ public class Main {
 	static int rotulo;
 	static int variaveisDeclaradas = 0;
 	static Token token = new Token();
-	static Token atribToken = new Token();
+	static Token auxToken = new Token();
 	static AnalisadorLexico analisadorLexico;
 	static GeradorCodigo geradorCodigo;
 	static TabelaSimbolos tabelaSimbolos = new TabelaSimbolos();
@@ -15,12 +15,19 @@ public class Main {
 	static int nivelMax = 0;
 	static int allocIndex = 0;
 	static int rotuloVariavel = 0;
+	static ArrayList<Integer> procFuncRotuloStack;
+	static ArrayList<Integer> allocStack;
+	static ArrayList<Integer> allocPerFuncProcStack;
 
 	public static void main(String[] args) throws IOException, LexicoException, SintaticoException, SemanticoException {
 
 		try {
 			analisadorLexico = new AnalisadorLexico("testeRafa.txt");
 			geradorCodigo = new GeradorCodigo();
+			procFuncRotuloStack = new ArrayList<Integer>();
+			allocStack = new ArrayList<Integer>();
+			allocPerFuncProcStack = new ArrayList<Integer>();
+			allocPerFuncProcStack.add(0);
 //			 teste lexico
 //			Token lastToken = null;
 //			try {
@@ -55,6 +62,12 @@ public class Main {
 						analisaBloco();
 						if (token.simbolo == "sponto") {
 							if (analisadorLexico.getToken().getSimbolo() == "error") {
+								for (int dallocIndex = allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex > 0; dallocIndex--) {
+									geradorCodigo.geraDalloc(allocStack.get(allocStack.size() - 2), allocStack.get(allocStack.size() - 1));
+									allocStack.remove(allocStack.size() - 1);
+									allocStack.remove(allocStack.size() - 1);
+								}
+								allocPerFuncProcStack.remove(allocPerFuncProcStack.size() - 1);
 								geradorCodigo.geraHlt();
 								System.out.print("Compilado com sucesso");
 								geradorCodigo.geraArquivo();
@@ -148,7 +161,7 @@ public class Main {
 	}
 
 	public static void analisaAtribChProcedimento() throws SintaticoException, IOException, LexicoException, SemanticoException {
-		atribToken = token;
+		auxToken = token;
 		token = analisadorLexico.getToken();
 		if (token.simbolo == "satribuicao") {
 			
@@ -167,30 +180,96 @@ public class Main {
 			}
 			System.out.println("");
 			
-			if (tabelaSimbolos.verificaVariavelInteiro(atribToken.lexema, nivelList)) {
-				atribToken.simbolo = "variavel inteiro";
-			} else {
-				atribToken.simbolo = "variavel booleano";
+			switch (tabelaSimbolos.verificaTipoIndentificador(auxToken.lexema, nivelList)) {
+			case 1:
+				auxToken.simbolo = "variavel inteiro";
+				break;
+			case 2:
+				auxToken.simbolo = "variavel booleano";
+				break;
+			case 3:
+				auxToken.simbolo = "funcao inteiro";
+				break;
+			case 4:
+				auxToken.simbolo = "funcao booleano";
+				break;
+			case 0:
+				throw new SemanticoException("Erro Semantico do token <" + token.simbolo + "(" + token.lexema
+						+ ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
 			}
 			
 			ArrayList<Token> auxPostfix =(ArrayList<Token>) postfixList.clone();
 			
-			if (atribToken.simbolo == "variavel inteiro") {
+			if (auxToken.simbolo == "variavel inteiro") {
 				if (!geradorCodigo.validaPostFixInteiro(auxPostfix)) {
 					throw new SemanticoException("Erro Semantico do token <" + token.simbolo + "(" + token.lexema
 							+ ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
 				}
+				geradorCodigo.geraCodigoDaPosfix(postfixList, tabelaSimbolos, nivelList);
+				// dar store
+				geradorCodigo.geraStr(tabelaSimbolos.returnVarRotulo(auxToken.lexema, nivelList));
 			} else {
-				if (!geradorCodigo.validaPostFixBooleano(auxPostfix)) {
-					throw new SemanticoException("Erro Semantico do token <" + token.simbolo + "(" + token.lexema
-							+ ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
+				if (auxToken.simbolo == "variavel booleano") {
+					if (!geradorCodigo.validaPostFixBooleano(auxPostfix)) {
+						throw new SemanticoException("Erro Semantico do token <" + token.simbolo + "(" + token.lexema
+								+ ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
+					}
+					geradorCodigo.geraCodigoDaPosfix(postfixList, tabelaSimbolos, nivelList);
+					// dar store
+					geradorCodigo.geraStr(tabelaSimbolos.returnVarRotulo(auxToken.lexema, nivelList));
+				} else {
+					if (auxToken.simbolo == "funcao inteiro") {
+						if (!geradorCodigo.validaPostFixInteiro(auxPostfix)) {
+							throw new SemanticoException("Erro Semantico do token <" + token.simbolo + "(" + token.lexema
+									+ ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
+						}
+						geradorCodigo.geraCodigoDaPosfix(postfixList, tabelaSimbolos, nivelList);
+						
+						// valida se esta na funcao para dar retorno
+						
+						// dar return de funcao
+						int allocQtd = 0;
+						int allocStart = 0;
+						for (int dallocIndex = allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex > 0; dallocIndex--) {
+							// geradorCodigo.geraDalloc(allocStack.get(allocStack.size() - 2), allocStack.get(allocStack.size() - 1));
+							allocQtd += allocStack.get(allocStack.size() - 1);
+							allocStack.remove(allocStack.size() - 1);
+							allocStart = allocStack.get(allocStack.size() - 1);
+							allocStack.remove(allocStack.size() - 1);
+						}
+						allocPerFuncProcStack.remove(allocPerFuncProcStack.size() - 1);
+						geradorCodigo.geraReturnF(allocStart, allocQtd);
+					} else {
+						if (auxToken.simbolo == "funcao booleano") {
+							if (!geradorCodigo.validaPostFixBooleano(auxPostfix)) {
+								throw new SemanticoException("Erro Semantico do token <" + token.simbolo + "(" + token.lexema
+										+ ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
+							}
+							geradorCodigo.geraCodigoDaPosfix(postfixList, tabelaSimbolos, nivelList);
+							
+							// valida se esta na funcao para dar retorno
+							
+							// dar return de funcao
+							int allocQtd = 0;
+							int allocStart = 0;
+							for (int dallocIndex = allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex > 0; dallocIndex--) {
+								// geradorCodigo.geraDalloc(allocStack.get(allocStack.size() - 2), allocStack.get(allocStack.size() - 1));
+								allocQtd += allocStack.get(allocStack.size() - 1);
+								allocStack.remove(allocStack.size() - 1);
+								allocStart = allocStack.get(allocStack.size() - 1);
+								allocStack.remove(allocStack.size() - 1);
+							}
+							allocPerFuncProcStack.remove(allocPerFuncProcStack.size() - 1);
+							geradorCodigo.geraReturnF(allocStart, allocQtd);
+						} else {
+							throw new SemanticoException("Erro Semantico do token <" + token.simbolo + "(" + token.lexema
+									+ ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
+						}
+					}
 				}
+				
 			}
 			
-			geradorCodigo.geraCodigoDaPosfix(postfixList, tabelaSimbolos, nivelList);
-			
-			// dar store
-			geradorCodigo.geraStr(tabelaSimbolos.returnVarRotulo(atribToken.lexema, nivelList));
 		} else {
 			chamadaProcedimento();
 		}
@@ -295,7 +374,7 @@ public class Main {
 			analisaComandoSimples();
 			
 			// Gera('', JMPF,auxrot1,'') {retorna ao inicio loop}
-			geradorCodigo.geraJmpF(auxrot1);
+			geradorCodigo.geraJmp(auxrot1);
 			
 			// Gera(auxrot2, NULL,'','') {fim do while}
 			geradorCodigo.geraNull(auxrot2);
@@ -313,8 +392,9 @@ public class Main {
 			if (token.simbolo == "sidentificador") {
 //					Pesquisa em toda tabela ?
 					if (tabelaSimbolos.verificaVarDeclarada(token.lexema, nivelList)) {
+						geradorCodigo.geraRd();
+						geradorCodigo.geraStr(tabelaSimbolos.returnVarRotulo(token.lexema, nivelList));
 						token = analisadorLexico.getToken();
-
 						if (token.simbolo == "sfecha_parenteses") {
 							token = analisadorLexico.getToken();
 						} else {
@@ -342,6 +422,8 @@ public class Main {
 			token = analisadorLexico.getToken();
 			if (token.simbolo == "sidentificador") {
 				if (tabelaSimbolos.verificaVarDeclarada(token.lexema, nivelList)) {
+					geradorCodigo.geraLdv(tabelaSimbolos.returnVarRotulo(token.lexema, nivelList));
+					geradorCodigo.geraPrn();
 					token = analisadorLexico.getToken();
 					if (token.simbolo == "sfecha_parenteses") {
 						token = analisadorLexico.getToken();
@@ -368,6 +450,14 @@ public class Main {
 			if (tabelaSimbolos.verificaDeclaradoTudo(token.getLexema(), nivelList)) {
 				// se (TabSimb[ind].tipo == "funcao inteiro") ou (TabSimb[ind].tipo == "funcao booleano")
 				if (tabelaSimbolos.verificaIndentificadorFuncao(token.getLexema(), nivelList)) {
+					switch (tabelaSimbolos.verificaTipoIndentificador(token.lexema, nivelList)) {
+					case 3:
+						token.simbolo = "funcao inteiro";
+						break;
+					case 4:
+						token.simbolo = "funcao booleano";
+						break;
+					}
 					infixList.add(token);
 				// analisa_chamada_funcao
 				chamadaFuncao();
@@ -515,6 +605,9 @@ public class Main {
 			tabelaSimbolos.colocaTipo("variavel " + token.lexema, variaveisDeclaradas);
 			
 			geradorCodigo.geraAlloc(allocIndex, variaveisDeclaradas);
+			allocStack.add(allocIndex);
+			allocStack.add(variaveisDeclaradas);
+			allocPerFuncProcStack.set(allocPerFuncProcStack.size() - 1, allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1) + 1);
 			allocIndex += variaveisDeclaradas;
 			
 			variaveisDeclaradas = 0;
@@ -542,6 +635,7 @@ public class Main {
 			flag = 1;
 		}
 		while (token.simbolo == "sprocedimento" || token.simbolo == "sfuncao") {
+			allocPerFuncProcStack.add(0);
 			if (token.simbolo == "sprocedimento") {
 				analisaDeclaracaoProcedimento();
 			} else {
@@ -573,7 +667,7 @@ public class Main {
 				// se nao encontrou
 				
 				// insere_tabela(token.lexema, "procedimento", nivel, rotulo) {guarda na TabSimb}
-				tabelaSimbolos.insereTabela(token.getLexema(), "procedimento", nivelList.get(nivelList.size() - 1), rotulo++);
+				tabelaSimbolos.insereTabela(token.getLexema(), "procedimento", nivelList.get(nivelList.size() - 2), rotulo);
 				System.out.println(rotulo);
 				// Gera(rotulo,NULL,'','') {CALL ira buscar esse rotulo na TabSimb}
 				geradorCodigo.geraNull(rotulo);
@@ -585,6 +679,15 @@ public class Main {
 
 				if (token.simbolo == "sponto_virgula") {
 					analisaBloco();
+					
+					
+					for (int dallocIndex = allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex > 0; dallocIndex--) {
+						geradorCodigo.geraDalloc(allocStack.get(allocStack.size() - 2), allocStack.get(allocStack.size() - 1));
+						allocStack.remove(allocStack.size() - 1);
+						allocStack.remove(allocStack.size() - 1);
+					}
+					allocPerFuncProcStack.remove(allocPerFuncProcStack.size() - 1);
+					geradorCodigo.geraReturn();
 				} else {
 					throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
 							+ " na linha:" + token.linha + ", coluna:" + token.coluna);
@@ -606,12 +709,14 @@ public class Main {
 		// nivel := "L" (marca ou novo galho)
 		nivelMax++;
 		nivelList.add(nivelMax);
+		
 		if (token.simbolo == "sidentificador") {
 			// pesquisa_declfunc_tabela(token.lexema) se tem identificador duplicado
 			if (!tabelaSimbolos.verificaDeclaDuplicProc(token.simbolo, nivelList)) {
 				// se nao encontrou
+				
 				// insere_tabela
-
+				auxToken = token;
 				token = analisadorLexico.getToken();
 
 				if (token.simbolo == "sdoispontos") {
@@ -621,16 +726,20 @@ public class Main {
 						// se (token.simbolo = sinteiro)
 						if (token.simbolo == "sinteiro") {
 							// TABSIMG[pc].tipo := "funcao inteiro"
-							tabelaSimbolos.insereTabela(token.getLexema(), "funcao inteiro", nivelList.get(nivelList.size() - 1), rotulo++);
+							tabelaSimbolos.insereTabela(auxToken.getLexema(), "funcao inteiro", nivelList.get(nivelList.size() - 2), rotulo);
 							
 						}
 						// senao
 						if (token.simbolo == "sbooleano") {
 							// TABSIMG[pc].tipo := "funcao booleano"
-							tabelaSimbolos.insereTabela(token.getLexema(), "funcao booleano", nivelList.get(nivelList.size() - 1), rotulo++);
+							tabelaSimbolos.insereTabela(auxToken.getLexema(), "funcao booleano", nivelList.get(nivelList.size() - 2), rotulo);
 
 						}
-
+						
+						geradorCodigo.geraNull(rotulo);
+						
+						rotulo++;
+						
 						token = analisadorLexico.getToken();
 
 						if (token.simbolo == "sponto_virgula") {
@@ -657,18 +766,19 @@ public class Main {
 	}
 
 	public static void chamadaProcedimento() throws SintaticoException, IOException, LexicoException {
-		System.out.println(token.getLexema());
 		if (token.simbolo == "sponto_virgula") {
 			// gera codigo call para label do procedimento
 //			System.out.println(token.getLexema());
-			geradorCodigo.geraCall(tabelaSimbolos.returnProcFuncRotulo(token.lexema, nivelList));
+			geradorCodigo.geraCall(tabelaSimbolos.returnProcFuncRotulo(auxToken.lexema, nivelList));
 		} else {
 			throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
 					+ " na linha:" + token.linha + ", coluna:" + token.coluna);
 		}
 	}
 	public static void chamadaFuncao() throws SintaticoException, IOException, LexicoException {
+		token = analisadorLexico.getToken();
 		if (token.simbolo == "sponto_virgula") {
+			token = analisadorLexico.getToken();
 		} else {
 			throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
 					+ " na linha:" + token.linha + ", coluna:" + token.coluna);

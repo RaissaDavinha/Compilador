@@ -585,10 +585,13 @@ public class GeradorCodigo {
 	}
 
 	public void geraCall(int t) {
-		codigoGerado += "CALL " + t + "\n";
+		codigoGerado += "CALL " + "L" + t + "\n";
 	}
 
 	public void geraReturn() {
 		codigoGerado += "RETURN" + "\n";
+	}
+	public void geraReturnF(int m, int n) {
+		codigoGerado += "RETURNF " + m + " " + n + "\n"; 
 	}
 }
