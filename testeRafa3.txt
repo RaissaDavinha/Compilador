@@ -1,0 +1,24 @@
+programa test3;
+
+var a, b: inteiro;
+
+{func 1}
+funcao func1: inteiro;
+var resultado: inteiro;
+
+inicio
+  resultado:=a;
+  se a<=1 entao
+	func1:=a
+  senao
+  inicio
+    a:=a-1;
+	func1:=func1*resultado;
+  fim
+fim;
+
+inicio
+	leia(a);
+	b:=func1;
+	escreva(b);
+fim.

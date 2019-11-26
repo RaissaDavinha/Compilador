@@ -18,16 +18,18 @@ public class Main {
 	static ArrayList<Integer> procFuncRotuloStack;
 	static ArrayList<Integer> allocStack;
 	static ArrayList<Integer> allocPerFuncProcStack;
+	static ArrayList<String> procFunDeclaPath;
 
 	public static void main(String[] args) throws IOException, LexicoException, SintaticoException, SemanticoException {
 
 		try {
-			analisadorLexico = new AnalisadorLexico("testeRafa2.txt");
+			analisadorLexico = new AnalisadorLexico("testeRafa3.txt");
 			geradorCodigo = new GeradorCodigo();
 			procFuncRotuloStack = new ArrayList<Integer>();
 			allocStack = new ArrayList<Integer>();
 			allocPerFuncProcStack = new ArrayList<Integer>();
 			allocPerFuncProcStack.add(0);
+			procFunDeclaPath = new ArrayList<String>();
 //			 teste lexico
 //			Token lastToken = null;
 //			try {
@@ -165,6 +167,11 @@ public class Main {
 		token = analisadorLexico.getToken();
 		if (token.simbolo == "satribuicao") {
 			
+			if (!tabelaSimbolos.verificaDeclaradoTudo(auxToken.lexema, nivelList)) {
+				throw new SemanticoException("Erro Semantico do token <" + auxToken.simbolo + "(" + auxToken.lexema
+						+ ")>" + " na linha:" + auxToken.linha + ", coluna:" + auxToken.coluna);
+			}
+			
 			infixList = new ArrayList<Token>();
 			token = analisadorLexico.getToken();
 			analisaExpressao();
@@ -235,14 +242,10 @@ public class Main {
 						int allocQtd = 0;
 						int allocStart = 0;
 						if (allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1) > 0) {
-							for (int dallocIndex = allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex > 0; dallocIndex--) {
-								// geradorCodigo.geraDalloc(allocStack.get(allocStack.size() - 2), allocStack.get(allocStack.size() - 1));
-								allocQtd += allocStack.get(allocStack.size() - 1);
-								allocStack.remove(allocStack.size() - 1);
-								allocStart = allocStack.get(allocStack.size() - 1);
-								allocStack.remove(allocStack.size() - 1);
+							for (int dallocIndex = 0; dallocIndex < allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex++) {
+								allocQtd += allocStack.get(allocStack.size() - 1 - dallocIndex);
+								allocStart += allocStack.get(allocStack.size() - 2 - dallocIndex);
 							}
-							allocPerFuncProcStack.remove(allocPerFuncProcStack.size() - 1);
 						}
 						geradorCodigo.geraReturnF(allocStart, allocQtd);
 					} else {
@@ -259,14 +262,10 @@ public class Main {
 							int allocQtd = 0;
 							int allocStart = 0;
 							if (allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1) > 0) {
-								for (int dallocIndex = allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex > 0; dallocIndex--) {
-									// geradorCodigo.geraDalloc(allocStack.get(allocStack.size() - 2), allocStack.get(allocStack.size() - 1));
-									allocQtd += allocStack.get(allocStack.size() - 1);
-									allocStack.remove(allocStack.size() - 1);
-									allocStart = allocStack.get(allocStack.size() - 1);
-									allocStack.remove(allocStack.size() - 1);
+								for (int dallocIndex = 0; dallocIndex < allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex++) {
+									allocQtd += allocStack.get(allocStack.size() - 1 - dallocIndex);
+									allocStart += allocStack.get(allocStack.size() - 1 - dallocIndex);
 								}
-								allocPerFuncProcStack.remove(allocPerFuncProcStack.size() - 1);
 							}
 							geradorCodigo.geraReturnF(allocStart, allocQtd);
 						} else {
@@ -469,7 +468,9 @@ public class Main {
 					}
 					infixList.add(token);
 				// analisa_chamada_funcao
+					
 				chamadaFuncao();
+				
 				} else {
 					// senao ler token
 					if (tabelaSimbolos.verificaVariavelInteiro(token.getLexema(), nivelList)) {
@@ -675,6 +676,10 @@ public class Main {
 			if (!tabelaSimbolos.verificaDeclaDuplicProc(token.lexema, nivelList)) {
 				// se nao encontrou
 				
+				
+				procFunDeclaPath.add("sprocedimento");
+				
+				
 				// insere_tabela(token.lexema, "procedimento", nivel, rotulo) {guarda na TabSimb}
 				tabelaSimbolos.insereTabela(token.getLexema(), "procedimento", nivelList.get(nivelList.size() - 2), rotulo);
 				System.out.println(rotulo);
@@ -688,7 +693,7 @@ public class Main {
 
 				if (token.simbolo == "sponto_virgula") {
 					analisaBloco();
-					
+					procFunDeclaPath.remove(procFunDeclaPath.size() - 1);
 					if (allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1) > 0) {
 						for (int dallocIndex = allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex > 0; dallocIndex--) {
 							geradorCodigo.geraDalloc(allocStack.get(allocStack.size() - 2), allocStack.get(allocStack.size() - 1));
@@ -719,12 +724,11 @@ public class Main {
 		// nivel := "L" (marca ou novo galho)
 		nivelMax++;
 		nivelList.add(nivelMax);
-		
 		if (token.simbolo == "sidentificador") {
 			// pesquisa_declfunc_tabela(token.lexema) se tem identificador duplicado
 			if (!tabelaSimbolos.verificaDeclaDuplicProc(token.simbolo, nivelList)) {
 				// se nao encontrou
-				
+				procFunDeclaPath.add("sfuncao");
 				// insere_tabela
 				auxToken = token;
 				token = analisadorLexico.getToken();
@@ -754,6 +758,16 @@ public class Main {
 
 						if (token.simbolo == "sponto_virgula") {
 							analisaBloco();
+							
+							procFunDeclaPath.remove(procFunDeclaPath.size() - 1);
+							
+							if (allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1) > 0) {
+								for (int dallocIndex = allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex > 0; dallocIndex--) {
+									allocStack.remove(allocStack.size() - 1);
+									allocStack.remove(allocStack.size() - 1);
+								}
+							}
+							allocPerFuncProcStack.remove(allocPerFuncProcStack.size() - 1);
 						}
 					} else {
 						throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema
@@ -787,7 +801,10 @@ public class Main {
 	}
 	public static void chamadaFuncao() throws SintaticoException, IOException, LexicoException {
 		token = analisadorLexico.getToken();
-		if (token.simbolo == "sponto_virgula") {
+		if (token.simbolo == "sponto_virgula" || token.simbolo == "smult" || token.simbolo == "sdiv" || token.simbolo == "smais" 
+				|| token.simbolo == "smenos" || token.simbolo == "smaior" || token.simbolo == "smaiorig" 
+				|| token.simbolo == "smenor" || token.simbolo == "smenorig" || token.simbolo == "sig" 
+				|| token.simbolo == "sdif" || token.simbolo == "se" || token.simbolo == "sou") {
 		} else {
 			throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
 					+ " na linha:" + token.linha + ", coluna:" + token.coluna);
