@@ -2,6 +2,7 @@ public class Simbolo {
 	int nivel;
 	String lexema;
 	String tipo;
+	int rotulo;
 	
 	
 	public int getNivel() {

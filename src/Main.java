@@ -13,6 +13,8 @@ public class Main {
 	static ArrayList<Token> infixList;
 	static ArrayList<Token> postfixList;
 	static int nivelMax = 0;
+	static int allocIndex = 0;
+	static int rotuloVariavel = 0;
 
 	public static void main(String[] args) throws IOException, LexicoException, SintaticoException, SemanticoException {
 
@@ -43,9 +45,12 @@ public class Main {
 				token = analisadorLexico.getToken();
 				if (token.simbolo == "sidentificador") {
 					// insere_table(token.lexema, "nomedeprograma","","");
-					tabelaSimbolos.insereTabela(token.lexema, "nomedeprograma", nivelList.get(nivelList.size() - 1));
+					tabelaSimbolos.insereTabela(token.lexema, "nomedeprograma", nivelList.get(nivelList.size() - 1), rotulo++);
 					token = analisadorLexico.getToken();
 					if (token.simbolo == "sponto_virgula") {
+
+						geradorCodigo.geraStart();
+						
 						// comeca analisa_bloco
 						analisaBloco();
 						if (token.simbolo == "sponto") {
@@ -192,7 +197,6 @@ public class Main {
 		postfixList = geradorCodigo.geraPostFix(infixList);
 		
 		for (Token postfix : postfixList) { 		      
-	           //System.out.print("<" + postfix.lexema + "(" + postfix.simbolo + ")>"); 		
 			System.out.print(postfix.lexema);
 		}
 		System.out.println("");
@@ -202,6 +206,8 @@ public class Main {
 			throw new SemanticoException("Erro Semantico do token <" + token.simbolo + "(" + token.lexema
 					+ ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
 		}
+		
+		geradorCodigo.geraCodigoDaPosfix(postfixList, tabelaSimbolos, nivelList);
 		
 		if (token.simbolo == "sentao") {
 			token = analisadorLexico.getToken();
@@ -219,10 +225,17 @@ public class Main {
 	public static void analisaEnquanto() throws SintaticoException, IOException, LexicoException, SemanticoException {
 		infixList = new ArrayList<Token>();
 		// Def auxrot1, auxrot2 inteiro
+		int auxrot1, auxrot2;
 
 		// auxrot1 := rotulo
+		auxrot1 = rotulo;
+
 		// Gera(rotulo, NULL,'','') {inicio do while}
+		geradorCodigo.geraNull(rotulo);
+		
 		// rotulo := rotulo + 1
+		rotulo++;
+		
 		token = analisadorLexico.getToken();
 		analisaExpressao();
 		
@@ -244,13 +257,24 @@ public class Main {
 		
 		
 		if (token.simbolo == "sfaca") {
-			// auxtor2 := rotulo
+			// auxrot2 := rotulo
+			auxrot2 = rotulo;
+			
 			// Gera('', JMPF,rotulo,'') {salta se falso}
+			geradorCodigo.geraJmpF(rotulo);
+			
 			// rotulo := rotulo + 1
+			rotulo++;
+			
 			token = analisadorLexico.getToken();
 			analisaComandoSimples();
+			
 			// Gera('', JMPF,auxrot1,'') {retorna ao inicio loop}
+			geradorCodigo.geraJmpF(auxrot1);
+			
 			// Gera(auxrot2, NULL,'','') {fim do while}
+			geradorCodigo.geraNull(auxrot2);
+			
 		} else {
 			throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
 					+ " na linha:" + token.linha + ", coluna:" + token.coluna);
@@ -428,7 +452,7 @@ public class Main {
 		do {
 			if (token.simbolo == "sidentificador") {
 				if (!tabelaSimbolos.verificaDeclaDuplicVar(token.lexema, nivelList)) {
-					tabelaSimbolos.insereTabela(token.lexema, "variavel", nivelList.get(nivelList.size() - 1));
+					tabelaSimbolos.insereTabela(token.lexema, "variavel", nivelList.get(nivelList.size() - 1), rotuloVariavel++);
 					variaveisDeclaradas++;
 					token = analisadorLexico.getToken();
 					if (token.simbolo == "svirgula" || token.simbolo == "sdoispontos") {
@@ -465,6 +489,9 @@ public class Main {
 			// coloca_tipo_tabela(token.lexema)
 			tabelaSimbolos.colocaTipo("variavel " + token.lexema, variaveisDeclaradas);
 			
+			geradorCodigo.geraAlloc(allocIndex, variaveisDeclaradas);
+			allocIndex += variaveisDeclaradas;
+			
 			variaveisDeclaradas = 0;
 		}
 		token = analisadorLexico.getToken();
@@ -472,12 +499,22 @@ public class Main {
 
 	public static void analisaSubrotina() throws SintaticoException, IOException, LexicoException, SemanticoException {
 		// Def auxrot, flag inteiro
+		int auxrot = 0;
+		int flag = 0;
+		
 		// flag = 0
 		if (token.simbolo == "sprocedimento" || token.simbolo == "sfuncao") {
 			// auxrot := rotulo
+			auxrot = rotulo;
+			
 			// Gera('', JMP, rotulo, '') {Salta sub-rotinas}
+			geradorCodigo.geraJmp(rotulo);
+			
 			// rotulo := rotulo + 1
+			rotulo++;
+			
 			// flag = 1
+			flag = 1;
 		}
 		while (token.simbolo == "sprocedimento" || token.simbolo == "sfuncao") {
 			if (token.simbolo == "sprocedimento") {
@@ -493,7 +530,10 @@ public class Main {
 			}
 		}
 		// if flag = 1
-		// entao Gera(auxrot,NULL'','') {inicio do principal}
+		if (flag == 1) {
+			// entao Gera(auxrot,NULL'','') {inicio do principal}
+			geradorCodigo.geraNull(auxrot);
+		}
 	}
 
 	public static void analisaDeclaracaoProcedimento()
@@ -506,13 +546,16 @@ public class Main {
 			// pesquisa_declproc_tabela(token.lexema)
 			if (!tabelaSimbolos.verificaDeclaDuplicProc(token.lexema, nivelList)) {
 				// se nao encontrou
-				// insere_tabela(token.lexema, "procedimento", nivel, rotulo) {guarda na
-				// TabSimb}
-				tabelaSimbolos.insereTabela(token.getLexema(), "procedimento", nivelList.get(nivelList.size() - 1));
+				
+				// insere_tabela(token.lexema, "procedimento", nivel, rotulo) {guarda na TabSimb}
+				tabelaSimbolos.insereTabela(token.getLexema(), "procedimento", nivelList.get(nivelList.size() - 1), rotulo++);
 
 				// Gera(rotulo,NULL,'','') {CALL ira buscar esse rotulo na TabSimb}
+				geradorCodigo.geraNull(rotulo);
+				
 				// rotulo := rotulo + 1
-
+				rotulo++;
+				
 				token = analisadorLexico.getToken();
 
 				if (token.simbolo == "sponto_virgula") {
@@ -552,13 +595,15 @@ public class Main {
 					if (token.simbolo == "sinteiro" || token.simbolo == "sbooleano") {
 						// se (token.simbolo = sinteiro)
 						if (token.simbolo == "sinteiro") {
-							tabelaSimbolos.insereTabela(token.getLexema(), "funcao inteiro", nivelList.get(nivelList.size() - 1));
 							// TABSIMG[pc].tipo := "funcao inteiro"
+							tabelaSimbolos.insereTabela(token.getLexema(), "funcao inteiro", nivelList.get(nivelList.size() - 1), rotulo++);
+							
 						}
 						// senao
 						if (token.simbolo == "sbooleano") {
-							tabelaSimbolos.insereTabela(token.getLexema(), "funcao booleano", nivelList.get(nivelList.size() - 1));
 							// TABSIMG[pc].tipo := "funcao booleano"
+							tabelaSimbolos.insereTabela(token.getLexema(), "funcao booleano", nivelList.get(nivelList.size() - 1), rotulo++);
+
 						}
 
 						token = analisadorLexico.getToken();
@@ -588,7 +633,17 @@ public class Main {
 
 	public static void chamadaProcedimento() throws SintaticoException, IOException, LexicoException {
 		if (token.simbolo == "sponto_virgula") {
-
+			// gera codigo call para label do procedimento
+			geradorCodigo.geraCall(atribToken.lexema);
+		} else {
+			throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
+					+ " na linha:" + token.linha + ", coluna:" + token.coluna);
+		}
+	}
+	public static void chamadaFuncao() throws SintaticoException, IOException, LexicoException {
+		if (token.simbolo == "sponto_virgula") {
+			// gera codigo call para label do procedimento
+			geradorCodigo.geraCall(atribToken.lexema);
 		} else {
 			throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
 					+ " na linha:" + token.linha + ", coluna:" + token.coluna);

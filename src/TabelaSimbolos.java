@@ -5,11 +5,12 @@ public class TabelaSimbolos {
 
 	int stackPointer = 0;
 
-	public void insereTabela(String lexema, String tipo, int nivel) {
+	public void insereTabela(String lexema, String tipo, int nivel, int rotulo) {
 		Simbolo simbolo = new Simbolo();
 		simbolo.lexema = lexema;
 		simbolo.tipo = tipo;
 		simbolo.nivel = nivel;
+		simbolo.rotulo = rotulo;
 		simbolos.add(simbolo);
 		stackPointer++;
 	}
@@ -161,7 +162,23 @@ public class TabelaSimbolos {
 			simbolos.set(index, auxSimbolo);
 		}
 	}
-
+	public int returnVarRotulo(String lexema, ArrayList<Integer> nivelList) {
+		int i = nivelList.size() - 1;
+		int j = 0;
+		do {
+			while (j < simbolos.size()) {
+				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && (simbolos.get(j).tipo.equals("variavel inteiro") || simbolos.get(j).tipo.equals("variavel booleano"))) {
+					return simbolos.get(j).rotulo;
+				} else {
+					j++;
+				}
+			}
+			j = 0;
+			i--;
+		} while (i >= 0);
+		
+		return 0;
+	}
 	
 
 }

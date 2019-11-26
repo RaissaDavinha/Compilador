@@ -5,7 +5,6 @@ import java.util.Stack;
 public class GeradorCodigo {
 	ArrayList<Token> postFix;
 	ArrayList<Token> postfixStack;
-	int label = 0;
 	String codigoGerado;
 	
 	public ArrayList<Token> geraPostFix(ArrayList<Token> infix) throws SemanticoException {
@@ -386,7 +385,17 @@ public class GeradorCodigo {
 	}
 
 	
-
+	public void geraCodigoDaPosfix(ArrayList<Token> postFixList, TabelaSimbolos tabelaSimbolos, ArrayList<Integer> nivelList) {
+		int postFixIndex = 0;
+		
+		while ((postFix.get(postFixIndex).simbolo == "variavel inteiro" || postFix.get(postFixIndex).simbolo == "variavel booleano" || postFix.get(postFixIndex).simbolo == "snumero"
+				|| postFix.get(postFixIndex).simbolo == "funcao booleano" || postFix.get(postFixIndex).simbolo == "funcao inteiro" || postFix.get(postFixIndex).simbolo == "sverdadeiro"
+				|| postFix.get(postFixIndex).simbolo == "sfalso")) {
+			postFixIndex++;
+		}
+		
+	}
+	
 	public void geraLdc(int k) {
 		codigoGerado += "LDC " + k +"\n"; 
 	}
@@ -463,16 +472,16 @@ public class GeradorCodigo {
 		codigoGerado += "STR " + n + "\n"; 
 	}
 
-	public void geraJmp(String t) {
+	public void geraJmp(int t) {
 		codigoGerado += "JMP " + t + "\n"; 
 	}
 
-	public void geraJmpF(String t) {
+	public void geraJmpF(int t) {
 		codigoGerado += "JMPF " + t + "\n"; 
 	}
 
-	public void geraNull() {
-		codigoGerado += "NULL" + "\n"; 
+	public void geraNull(int t) {
+		codigoGerado += t + " NULL" + "\n"; 
 	}
 
 	public void geraRd() {
@@ -497,9 +506,5 @@ public class GeradorCodigo {
 
 	public void geraReturn() {
 		codigoGerado += "RETURN" + "\n";
-	}
-	public void geraLabel() {
-		codigoGerado += "L" + label + "\n";
-		label++;
 	}
 }
