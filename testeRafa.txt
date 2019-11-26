@@ -1,0 +1,9 @@
+programa testRafa;
+
+var a,b : inteiro;
+
+inicio
+    b:= 4;
+    a:= b + 3;
+fim.
+

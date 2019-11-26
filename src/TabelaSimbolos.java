@@ -179,6 +179,22 @@ public class TabelaSimbolos {
 		
 		return 0;
 	}
-	
+	public int returnProcFuncRotulo(String lexema, ArrayList<Integer> nivelList) { // retorna true se ja estiver declarada
+		int i = nivelList.size() - 1;
+		int j = 0;
+		do {
+			while (j < simbolos.size()) {
+				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && !simbolos.get(i).tipo.equals("variavel inteiro") && !simbolos.get(i).tipo.equals("variavel booleano") && !simbolos.get(i).tipo.equals("nomedeprograma")) {
+					return simbolos.get(j).rotulo;
+				} else {
+					j++;
+				}
+			}
+			j = 0;
+			i--;
+		} while (i >= 0);
+		
+		return 0;
+	}
 
 }

@@ -1,3 +1,5 @@
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -5,7 +7,7 @@ import java.util.Stack;
 public class GeradorCodigo {
 	ArrayList<Token> postFix;
 	ArrayList<Token> postfixStack;
-	String codigoGerado;
+	String codigoGerado = "";
 	
 	public ArrayList<Token> geraPostFix(ArrayList<Token> infix) throws SemanticoException {
 		postFix = new ArrayList<Token>();
@@ -387,16 +389,99 @@ public class GeradorCodigo {
 	
 	public void geraCodigoDaPosfix(ArrayList<Token> postFixList, TabelaSimbolos tabelaSimbolos, ArrayList<Integer> nivelList) {
 		int postFixIndex = 0;
-		
-		while ((postFix.get(postFixIndex).simbolo == "variavel inteiro" || postFix.get(postFixIndex).simbolo == "variavel booleano" || postFix.get(postFixIndex).simbolo == "snumero"
-				|| postFix.get(postFixIndex).simbolo == "funcao booleano" || postFix.get(postFixIndex).simbolo == "funcao inteiro" || postFix.get(postFixIndex).simbolo == "sverdadeiro"
-				|| postFix.get(postFixIndex).simbolo == "sfalso")) {
+
+		while (postFixIndex < postFix.size()) {
+			switch (postFix.get(postFixIndex).simbolo) {
+				case "funcao booleano":
+				case "funcao inteiro":
+					this.geraCall(tabelaSimbolos.returnProcFuncRotulo(postFix.get(postFixIndex).lexema, nivelList));
+					break;
+					
+				case "variavel inteiro":
+				case "variavel booleano":
+					this.geraLdv(tabelaSimbolos.returnVarRotulo(postFix.get(postFixIndex).lexema, nivelList));
+					break;
+					
+				case "snumero":
+					this.geraLdc(postFix.get(postFixIndex).lexema);
+					break;
+				
+				case "sverdadeiro":
+					this.geraLdc("1");
+					break;
+					
+				case "sfalso":
+					this.geraLdc("0");
+					break;
+				
+				case "smenosunitario":
+					this.geraInv();
+						break;
+						
+				case "snao":
+					this.geraNeg();
+					break;
+					
+				case "smult":
+					this.geraMult();
+					break;
+					
+				case "sdiv":
+					this.geraDiv();
+					break;
+					
+				case "smais":
+					this.geraAdd();;
+					break;
+					
+				case "smenos":
+					this.geraSub();
+					break;
+					
+				case "smaior":
+					this.geraCma();
+					break;
+					
+				case "smenor":
+					this.geraCme();
+					break;
+					
+				case "smaiorig":
+					this.geraCmaq();
+					break;
+					
+				case "smenorig":
+					this.geraCmeq();
+					break;
+					
+				case "sig":
+					this.geraCeq();
+					break;
+					
+				case "sdif":
+					this.geraCdif();
+					break;
+					
+				case "se":
+					this.geraAnd();
+					break;
+					
+				case "sou":
+					this.geraOr();
+					break;
+			}
 			postFixIndex++;
 		}
-		
 	}
 	
-	public void geraLdc(int k) {
+	public void geraArquivo() throws IOException {
+		FileWriter fileWriter = new FileWriter("object.txt");
+		String fileContent = "This is a sample text.";
+	    fileWriter.write(codigoGerado);
+	    fileWriter.close();
+	}
+	
+	public void geraLdc(String k) {
 		codigoGerado += "LDC " + k +"\n"; 
 	}
 
@@ -493,14 +578,14 @@ public class GeradorCodigo {
 	}
 
 	public void geraAlloc(int m, int n) {
-		codigoGerado += "ALLOC " + m + n + "\n"; 
+		codigoGerado += "ALLOC " + m + " " + n + "\n"; 
 	}
 
 	public void geraDalloc(int m, int n) {
-		codigoGerado += "DALLOC " + m + n + "\n"; 
+		codigoGerado += "DALLOC " + m + " " + n + "\n"; 
 	}
 
-	public void geraCall(String t) {
+	public void geraCall(int t) {
 		codigoGerado += "CALL " + t + "\n";
 	}
 
