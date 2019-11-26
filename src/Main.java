@@ -272,13 +272,14 @@ public class Main {
 		}
 		System.out.println("");
 		
+		ArrayList<Token> auxPostfix =(ArrayList<Token>) postfixList.clone();
 		
-		if (!geradorCodigo.validaPostFixBooleano(postfixList)) {
+		if (!geradorCodigo.validaPostFixBooleano(auxPostfix)) {
 			throw new SemanticoException("Erro Semantico do token <" + token.simbolo + "(" + token.lexema
 					+ ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
 		}
 		
-		
+		geradorCodigo.geraCodigoDaPosfix(postfixList, tabelaSimbolos, nivelList);
 		
 		if (token.simbolo == "sfaca") {
 			// auxrot2 := rotulo
@@ -658,6 +659,7 @@ public class Main {
 	public static void chamadaProcedimento() throws SintaticoException, IOException, LexicoException {
 		if (token.simbolo == "sponto_virgula") {
 			// gera codigo call para label do procedimento
+			System.out.println(token.getLexema());
 			geradorCodigo.geraCall(tabelaSimbolos.returnProcFuncRotulo(token.lexema, nivelList));
 		} else {
 			throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
