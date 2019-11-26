@@ -116,13 +116,34 @@ public class TabelaSimbolos {
 		
 		return false;
 	}
+	public boolean verificaVariavelInteiro(String lexema, ArrayList<Integer> nivelList) {
+		int i = nivelList.size() - 1;
+		int j = 0;
+		do {
+			while (j < simbolos.size()) {
+				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && simbolos.get(j).tipo.contains("variavel")) {
+					if (simbolos.get(i).tipo.equals("variavel inteiro")) {
+						return true;
+					} else {
+						return false;
+					}
+				} else {
+					j++;
+				}
+			}
+			j = 0;
+			i--;
+		} while (i >= 0);
+		
+		return false;
+	}
 	
 	public boolean verificaDeclaradoTudo(String lexema, ArrayList<Integer> nivelList) { // retorna true se ja estiver declarada
 		int i = nivelList.size() - 1;
 		int j = 0;
 		do {
 			while (j < simbolos.size()) {
-				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && !simbolos.get(j).tipo.equals("nomedeprograma")) {
+				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && !simbolos.get(j).tipo.equals("nomedeprograma") && !simbolos.get(j).tipo.equals("procedimento")) {
 					return true;
 				} else {
 					j++;

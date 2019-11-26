@@ -27,7 +27,6 @@ public class AnalisadorLexico {
 
 		fileReader.close();
 
-		System.out.print(fileContent);
 		auxContent = fileContent;
 
 		fileContent = auxContent.replace("\t", "");
@@ -202,6 +201,10 @@ public class AnalisadorLexico {
 
 				case "e":
 					token.setSimbolo("se");
+					break;
+					
+				case "nao":
+					token.setSimbolo("snao");
 					break;
 
 				default:
