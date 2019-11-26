@@ -12,23 +12,6 @@ public class SintaticMain {
 	public static void sintaticMain(String archive) throws IOException, LexicoException, SintaticoException {
 		try {
 			analisadorLexico = new AnalisadorLexico(archive);
-			
-			// teste lexico
-			//Token lastToken = null;
-			//try {
-			//lastToken = token = analisadorLexico.getToken();
-			//while (token != null) {
-			//	if (lastToken.getLinha() < token.getLinha()) {
-			//		System.out.print('\n');
-			//	}
-			//	System.out.print("<" + token.getSimbolo() + "(" + token.getLexema() + ")" + ">");
-			//	lastToken = token;
-			//	token = analisadorLexico.getToken();
-			//	}
-			//} catch (IndexOutOfBoundsException indexError) {
-			//	System.out.print(indexError.getMessage());
-			//}
-			
 			rotulo = 1;
 			token = analisadorLexico.getToken();
 

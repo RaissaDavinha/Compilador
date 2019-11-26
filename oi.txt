@@ -13,3 +13,5 @@ inicio
   total:= soma;
   escreva(total)
 fim.
+
+
