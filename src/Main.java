@@ -199,30 +199,46 @@ public class Main {
 	public static void analisaSe() throws SintaticoException, IOException, LexicoException, SemanticoException {
 		infixList = new ArrayList<Token>();
 		token = analisadorLexico.getToken();
+		int auxRot, auxRot2;
 		analisaExpressao();
 		
 		// gera posfix para comando se
 		postfixList = geradorCodigo.geraPostFix(infixList);
 		
-		for (Token postfix : postfixList) { 		      
+		for (Token postfix : postfixList) { 
 			System.out.print(postfix.lexema);
 		}
 		System.out.println("");
 		
+		ArrayList<Token> auxPostfix =(ArrayList<Token>) postfixList.clone();
 		
-		if (!geradorCodigo.validaPostFixBooleano(postfixList)) {
+		
+		if (!geradorCodigo.validaPostFixBooleano(auxPostfix)) {
 			throw new SemanticoException("Erro Semantico do token <" + token.simbolo + "(" + token.lexema
 					+ ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
 		}
 		
 		geradorCodigo.geraCodigoDaPosfix(postfixList, tabelaSimbolos, nivelList);
 		
+		
+		
 		if (token.simbolo == "sentao") {
+			geradorCodigo.geraJmpF(rotulo);
+			auxRot = rotulo;
+			rotulo++;
+			
 			token = analisadorLexico.getToken();
 			analisaComandoSimples();
+			
+			geradorCodigo.geraJmpF(rotulo);
+			auxRot2 = rotulo;
+			rotulo++;
+			
 			if (token.simbolo == "ssenao") {
+				geradorCodigo.geraNull(auxRot);
 				token = analisadorLexico.getToken();
 				analisaComandoSimples();
+				geradorCodigo.geraNull(auxRot2);
 			}
 		} else {
 			throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"

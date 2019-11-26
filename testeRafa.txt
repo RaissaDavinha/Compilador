@@ -1,9 +1,11 @@
-programa testRafa;
+programa test1;
 
-var a,b : inteiro;
-
+var a,b,c, x: inteiro;
+       z: booleano;
+       
 inicio
-    b:= 4;
-    a:= b + 3;
+  enquanto (a != 89) e (a<= 1000)  {condicao de parada}
+  faca inicio
+           c:= x+b
+       fim;
 fim.
-

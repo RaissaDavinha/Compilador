@@ -389,7 +389,6 @@ public class GeradorCodigo {
 	
 	public void geraCodigoDaPosfix(ArrayList<Token> postFixList, TabelaSimbolos tabelaSimbolos, ArrayList<Integer> nivelList) {
 		int postFixIndex = 0;
-
 		while (postFixIndex < postFix.size()) {
 			switch (postFix.get(postFixIndex).simbolo) {
 				case "funcao booleano":
@@ -439,6 +438,7 @@ public class GeradorCodigo {
 					break;
 					
 				case "smaior":
+					System.out.println("ola");
 					this.geraCma();
 					break;
 					
@@ -558,15 +558,15 @@ public class GeradorCodigo {
 	}
 
 	public void geraJmp(int t) {
-		codigoGerado += "JMP " + t + "\n"; 
+		codigoGerado += "JMP " +"L" + t + "\n"; 
 	}
 
 	public void geraJmpF(int t) {
-		codigoGerado += "JMPF " + t + "\n"; 
+		codigoGerado += "JMPF " + "L" + t + "\n"; 
 	}
 
 	public void geraNull(int t) {
-		codigoGerado += t + " NULL" + "\n"; 
+		codigoGerado += "L" + t + " NULL" + "\n"; 
 	}
 
 	public void geraRd() {
