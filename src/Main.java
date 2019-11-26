@@ -18,7 +18,10 @@ public class Main {
 	static ArrayList<Integer> procFuncRotuloStack;
 	static ArrayList<Integer> allocStack;
 	static ArrayList<Integer> allocPerFuncProcStack;
+	
 	static ArrayList<String> procFunDeclaPath;
+	static boolean procurandoRetorno = false;
+	static ArrayList<String> seEntaoStack;
 
 	public static void main(String[] args) throws IOException, LexicoException, SintaticoException, SemanticoException {
 
@@ -51,6 +54,7 @@ public class Main {
 			nivelList.add(0);
 
 			if (token.simbolo == "sprograma") {
+				procFunDeclaPath.add("sprograma");
 				token = analisadorLexico.getToken();
 				if (token.simbolo == "sidentificador") {
 					// insere_table(token.lexema, "nomedeprograma","","");
@@ -59,7 +63,8 @@ public class Main {
 					if (token.simbolo == "sponto_virgula") {
 
 						geradorCodigo.geraStart();
-						
+
+						procurandoRetorno = false;
 						// comeca analisa_bloco
 						analisaBloco();
 						if (token.simbolo == "sponto") {
@@ -109,7 +114,18 @@ public class Main {
 		token = analisadorLexico.getToken();
 		analisaEtVariaveis();
 		analisaSubrotina();
+		if (procFunDeclaPath.get(procFunDeclaPath.size() - 1) == "sfuncao") {
+			procurandoRetorno = true;
+			seEntaoStack = new ArrayList<String>();
+			seEntaoStack.add("smainN");
+		} else {
+			procurandoRetorno = false;
+		}
 		analisaComandos();
+		if (seEntaoStack.get(seEntaoStack.size() - 1) == "smainN") {
+			throw new SemanticoException("Erro Semantico do token <" + auxToken.simbolo + "(" + auxToken.lexema
+					+ ")>" + " na linha:" + auxToken.linha + ", coluna:" + auxToken.coluna);
+		}
 	}
 
 	public static void analisaComandos() throws IOException, SintaticoException, LexicoException, SemanticoException {
@@ -142,6 +158,9 @@ public class Main {
 			break;
 
 		case "sse":
+			if (procurandoRetorno == true) {
+				seEntaoStack.add("sseN");
+			}
 			analisaSe();
 			break;
 
@@ -230,6 +249,10 @@ public class Main {
 					geradorCodigo.geraStr(tabelaSimbolos.returnVarRotulo(auxToken.lexema, nivelList));
 				} else {
 					if (auxToken.simbolo == "funcao inteiro") {
+						if (procurandoRetorno == true) {
+							// substitui ultimo caracter por S caso achar retorno
+							seEntaoStack.set(seEntaoStack.size() - 1, seEntaoStack.get(seEntaoStack.size() - 1).substring(0,seEntaoStack.get(seEntaoStack.size() - 1).length() - 1) + "S");
+						}
 						if (!geradorCodigo.validaPostFixInteiro(auxPostfix)) {
 							throw new SemanticoException("Erro Semantico do token <" + token.simbolo + "(" + token.lexema
 									+ ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
@@ -250,6 +273,10 @@ public class Main {
 						geradorCodigo.geraReturnF(allocStart, allocQtd);
 					} else {
 						if (auxToken.simbolo == "funcao booleano") {
+							if (procurandoRetorno == true) {
+								// substitui ultimo caracter por S caso achar retorno
+								seEntaoStack.set(seEntaoStack.size() - 1, seEntaoStack.get(seEntaoStack.size() - 1).substring(0,seEntaoStack.get(seEntaoStack.size() - 1).length() - 1) + "S");
+							}
 							if (!geradorCodigo.validaPostFixBooleano(auxPostfix)) {
 								throw new SemanticoException("Erro Semantico do token <" + token.simbolo + "(" + token.lexema
 										+ ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
@@ -322,10 +349,28 @@ public class Main {
 			rotulo++;
 			
 			if (token.simbolo == "ssenao") {
+				if (procurandoRetorno == true) {
+					seEntaoStack.add("ssenaoN");
+				}
 				geradorCodigo.geraNull(auxRot);
 				token = analisadorLexico.getToken();
 				analisaComandoSimples();
 				geradorCodigo.geraNull(auxRot2);
+				if (procurandoRetorno == true) {
+					// verificar se o se e o senao possuem retorno
+					if (seEntaoStack.get(seEntaoStack.size() - 1).equals("ssenaoS") && seEntaoStack.get(seEntaoStack.size() - 2).equals("sseS") ) {
+						seEntaoStack.remove(seEntaoStack.size() - 1);
+						seEntaoStack.remove(seEntaoStack.size() - 1);
+						// substitui ultimo caracter por S caso achar retorno
+						seEntaoStack.set(seEntaoStack.size() - 1, seEntaoStack.get(seEntaoStack.size() - 1).substring(0,seEntaoStack.get(seEntaoStack.size() - 1).length() - 1) + "S");
+					} else {
+						seEntaoStack.remove(seEntaoStack.size() - 1);
+						seEntaoStack.remove(seEntaoStack.size() - 1);
+					}
+				}
+			} else {
+				// caso n tiver retorno desempilha ultimo por n garantir retorno
+				seEntaoStack.remove(seEntaoStack.size() - 1);
 			}
 		} else {
 			throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"

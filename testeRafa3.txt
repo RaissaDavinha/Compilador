@@ -2,19 +2,20 @@ programa test3;
 
 var a, b: inteiro;
 
-{func 1}
+{func fatorial}
 funcao func1: inteiro;
 var resultado: inteiro;
 
 inicio
   resultado:=a;
   se a<=1 entao
-	func1:=a
+	a:=a
   senao
   inicio
     a:=a-1;
-	func1:=func1*resultado;
-  fim
+	a:=func1*resultado;
+  fim;
+  func1:=1;
 fim;
 
 inicio

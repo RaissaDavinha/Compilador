@@ -18,7 +18,13 @@ public class Token {
 		return coluna;
 	}
 
-
+	public boolean teste(int a) {
+		if (a == 1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	public void setColuna(int coluna) {
 		this.coluna = coluna;
