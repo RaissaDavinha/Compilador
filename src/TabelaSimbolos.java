@@ -83,7 +83,7 @@ public class TabelaSimbolos {
 		int j = 0;
 		do {
 			while (j < simbolos.size()) {
-				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && !simbolos.get(i).tipo.equals("variavel inteiro") && !simbolos.get(i).tipo.equals("variavel booleano") && !simbolos.get(i).tipo.equals("nomedeprograma")) {
+				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && !simbolos.get(j).tipo.equals("variavel inteiro") && !simbolos.get(j).tipo.equals("variavel booleano") && !simbolos.get(j).tipo.equals("nomedeprograma")) {
 					return true;
 				} else {
 					j++;
@@ -100,7 +100,7 @@ public class TabelaSimbolos {
 		int j = 0;
 		do {
 			while (j < simbolos.size()) {
-				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && simbolos.get(i).tipo.equals("funcao booleano") && simbolos.get(i).tipo.equals("funcao inteiro")) {
+				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && (simbolos.get(j).tipo.equals("funcao booleano") || simbolos.get(j).tipo.equals("funcao inteiro"))) {
 					return true;
 				} else {
 					j++;
@@ -132,6 +132,40 @@ public class TabelaSimbolos {
 		} while (i >= 0);
 		
 		return false;
+	}
+	
+	public int verificaTipoIndentificador(String lexema, ArrayList<Integer> nivelList) {
+		int i = nivelList.size() - 1;
+		int j = 0;
+		do {
+			while (j < simbolos.size()) {
+				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema)) {
+					switch (simbolos.get(j).tipo) {
+						case "variavel inteiro":
+						return 1;
+						
+						case "variavel booleano":
+						return 2;
+						
+						case "funcao inteiro":
+						return 3;
+						
+						case "funcao booleano":
+						return 4;
+						
+						default:
+						return 0;
+					}
+				
+				} else {
+					j++;
+				}
+			}
+			j = 0;
+			i--;
+		} while (i >= 0);
+		
+		return 0;
 	}
 	
 	public boolean verificaDeclaradoTudo(String lexema, ArrayList<Integer> nivelList) { // retorna true se ja estiver declarada
@@ -184,7 +218,7 @@ public class TabelaSimbolos {
 		int j = 0;
 		do {
 			while (j < simbolos.size()) {
-				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && !simbolos.get(i).tipo.equals("variavel inteiro") && !simbolos.get(i).tipo.equals("variavel booleano") && !simbolos.get(i).tipo.equals("nomedeprograma")) {
+				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && !simbolos.get(j).tipo.equals("variavel inteiro") && !simbolos.get(j).tipo.equals("variavel booleano") && !simbolos.get(j).tipo.equals("nomedeprograma")) {
 					return simbolos.get(j).rotulo;
 				} else {
 					j++;
@@ -196,4 +230,5 @@ public class TabelaSimbolos {
 		
 		return 0;
 	}
+
 }

@@ -27,7 +27,6 @@ public class AnalisadorLexico {
 
 		fileReader.close();
 
-		System.out.print(fileContent);
 		auxContent = fileContent;
 
 		fileContent = auxContent.replace("\t", "");
@@ -99,12 +98,11 @@ public class AnalisadorLexico {
 			while (Character.isDigit(controlCharacter)) {
 				tokenBuilder = tokenBuilder + controlCharacter;
 				if (fileContentIndex < fileContent.length()) {
-					
-					
 					controlCharacter = fileContent.charAt(fileContentIndex);
 					fileContentIndex++;
 				}
 			}
+			fileContentIndex--;
 			token.setSimbolo("snumero");
 			token.setLexema(tokenBuilder);
 			token.setLinha(returnLineOfToken(fileContentIndex - 1, fileContent));
@@ -141,7 +139,7 @@ public class AnalisadorLexico {
 					token.setSimbolo("sentao");
 					break;
 
-				case "ssenao":
+				case "senao":
 					token.setSimbolo("ssenao");
 					break;
 
@@ -204,6 +202,14 @@ public class AnalisadorLexico {
 				case "e":
 					token.setSimbolo("se");
 					break;
+					
+				case "ou":
+					token.setSimbolo("sou");
+					break;
+					
+				case "nao":
+					token.setSimbolo("snao");
+					break;
 
 				default:
 					token.setSimbolo("sidentificador");
@@ -254,37 +260,54 @@ public class AnalisadorLexico {
 						token.setColuna(returnEndColumnOfToken(fileContentIndex - 1, fileContent) - token.lexema.length());
 					} else {
 						if (controlCharacter == '<' || controlCharacter == '>'
-								|| controlCharacter == '=') {
+							|| controlCharacter == '=' || controlCharacter == '!') {
 							// Trata Operador Relacional
 							tokenBuilder = "";
 							if (controlCharacter == '=') {
 								token.setSimbolo("sig");
 							} else {
-								if (controlCharacter == '>') {
+								if (controlCharacter == '!') {
 									if (fileContentIndex < fileContent.length()) {
 										if (fileContent.charAt(fileContentIndex) == '=') {
-											fileContentIndex++;
 											tokenBuilder += Character.toString(controlCharacter);
 											controlCharacter = fileContent.charAt(fileContentIndex);
-											token.setSimbolo("smaiorig");
+											fileContentIndex++;
+											token.setSimbolo("sdif");
+										} else {
+											// erro por ter um !
+											throw new LexicoException("Erro Léxico na linha:" + returnLineOfToken(fileContentIndex - 1, fileContent) + " coluna:" + returnEndColumnOfToken(fileContentIndex - 1, fileContent));
+										}
+									} else {
+										throw new LexicoException("Erro Léxico na linha:" + returnLineOfToken(fileContentIndex - 1, fileContent) + " coluna:" + returnEndColumnOfToken(fileContentIndex - 1, fileContent));
+									}
+								} else {
+									if (controlCharacter == '>') {
+										if (fileContentIndex < fileContent.length()) {
+											if (fileContent.charAt(fileContentIndex) == '=') {
+												tokenBuilder += Character.toString(controlCharacter);
+												controlCharacter = fileContent.charAt(fileContentIndex);
+												fileContentIndex++;
+												token.setSimbolo("smaiorig");
+											} else {
+												token.setSimbolo("smaior");
+											}
 										} else {
 											token.setSimbolo("smaior");
 										}
 									} else {
-										token.setSimbolo("smaior");
-									}
-								} else {
-									if (fileContentIndex < fileContent.length()) {
-										if (fileContent.charAt(fileContentIndex) == '=') {
-											fileContentIndex++;
-											tokenBuilder += Character.toString(controlCharacter);
-											controlCharacter = fileContent.charAt(fileContentIndex);
-											token.setSimbolo("smenorig");
+										if (fileContentIndex < fileContent.length()) {
+											if (fileContent.charAt(fileContentIndex) == '=') {
+												tokenBuilder += Character.toString(controlCharacter);
+												controlCharacter = fileContent.charAt(fileContentIndex);
+												fileContentIndex++;
+												token.setSimbolo("smenorig");
+											} else {
+												token.setSimbolo("smenor");
+											}
 										} else {
 											token.setSimbolo("smenor");
 										}
-									} else {
-										token.setSimbolo("smenor");
+										
 									}
 								}
 							}

@@ -4,6 +4,7 @@ public class Simbolo {
 	String tipo;
 	int rotulo;
 	
+	
 	public int getNivel() {
 		return nivel;
 	}

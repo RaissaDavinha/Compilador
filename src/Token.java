@@ -1,23 +1,30 @@
 
 public class Token {
-	@Override
-	public String toString() {
-		return "Token [lexema=" + lexema + ", simbolo=" + simbolo + ", linha=" + linha + "]";
-	}
-
-
-
 	String lexema;
 	String simbolo;
 	int linha;
 	int coluna;
 	
+	public Token(Token token) {
+		this.lexema = token.lexema;
+		this.simbolo = token.simbolo;
+		this.linha = token.linha;
+		this.coluna = token.coluna;
+	}
+	public Token() {
+	}
 	
 	public int getColuna() {
 		return coluna;
 	}
 
-
+	public boolean teste(int a) {
+		if (a == 1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	public void setColuna(int coluna) {
 		this.coluna = coluna;
@@ -57,5 +64,9 @@ public class Token {
 		this.simbolo = simbolo;
 	}
 
+	@Override
+	public String toString() {
+		return "Token [lexema=" + lexema + ", simbolo=" + simbolo + ", linha=" + linha + "]";
+	}
 
 }
