@@ -26,7 +26,7 @@ public class Main {
 	public static void main(String[] args) throws IOException, LexicoException, SintaticoException, SemanticoException {
 
 		try {
-			analisadorLexico = new AnalisadorLexico("teste_final_1.txt");
+			analisadorLexico = new AnalisadorLexico("TesteFinal01.txt");
 			geradorCodigo = new GeradorCodigo();
 			procFuncRotuloStack = new ArrayList<Integer>();
 			allocStack = new ArrayList<Integer>();
@@ -49,26 +49,26 @@ public class Main {
 //				System.out.print(indexError.getMessage());
 //			}
 			
-			rotulo = 1;
+			rotulo = 0;
 			token = analisadorLexico.getToken();
 			nivelList.add(0);
 
-			if (token.simbolo.equals("sprograma")) {
+			if (token.simbolo == "sprograma") {
 				procFunDeclaPath.add("sprograma");
 				token = analisadorLexico.getToken();
-				if (token.simbolo.equals("sidentificador")) {
+				if (token.simbolo == "sidentificador") {
 					// insere_table(token.lexema, "nomedeprograma","","");
 					tabelaSimbolos.insereTabela(token.lexema, "nomedeprograma", nivelList.get(nivelList.size() - 1), rotulo++);
 					token = analisadorLexico.getToken();
-					if (token.simbolo.equals( "sponto_virgula")) {
+					if (token.simbolo == "sponto_virgula") {
 
 						geradorCodigo.geraStart();
 
 						procurandoRetorno = false;
 						// comeca analisa_bloco
 						analisaBloco();
-						if (token.simbolo.equals( "sponto")) {
-							if (analisadorLexico.getToken().getSimbolo().equals( "error")) {
+						if (token.simbolo == "sponto") {
+							if (analisadorLexico.getToken().getSimbolo() == "error") {
 								for (int dallocIndex = allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex > 0; dallocIndex--) {
 									geradorCodigo.geraDalloc(allocStack.get(allocStack.size() - 2), allocStack.get(allocStack.size() - 1));
 									allocStack.remove(allocStack.size() - 1);
@@ -91,7 +91,7 @@ public class Main {
 						throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema
 								+ ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
 					}
-					if (token.simbolo.equals( "sponto")) {
+					if (token.simbolo == "sponto") {
 //						Verifica se acabou arquivo e comentarios(Nao deve precisar)
 					}
 				} else {
@@ -114,7 +114,7 @@ public class Main {
 		token = analisadorLexico.getToken();
 		analisaEtVariaveis();
 		analisaSubrotina();
-		if (procFunDeclaPath.get(procFunDeclaPath.size() - 1).equals( "sfuncao")) {
+		if (procFunDeclaPath.get(procFunDeclaPath.size() - 1) == "sfuncao") {
 			procurandoRetorno = true;
 			seEntaoStack = new ArrayList<String>();
 			seEntaoStack.add("smainN");
@@ -123,7 +123,7 @@ public class Main {
 		}
 		analisaComandos();
 		if (procurandoRetorno == true) {
-			if (seEntaoStack.get(seEntaoStack.size() - 1).equals("smainN")) {
+			if (seEntaoStack.get(seEntaoStack.size() - 1) == "smainN") {
 				throw new SemanticoException("Erro Semantico do token <" + auxToken.simbolo + "(" + auxToken.lexema
 						+ ")>" + " na linha:" + auxToken.linha + ", coluna:" + auxToken.coluna);
 			}
@@ -131,11 +131,11 @@ public class Main {
 	}
 
 	public static void analisaComandos() throws IOException, SintaticoException, LexicoException, SemanticoException {
-		if (token.simbolo.equals("sinicio")) {
+		if (token.simbolo == "sinicio") {
 			token = analisadorLexico.getToken();
 			analisaComandoSimples();
 			while (token.simbolo != "sfim") {
-				if (token.simbolo.equals("sponto_virgula")) {
+				if (token.simbolo == "sponto_virgula") {
 					token = analisadorLexico.getToken();
 					if (token.simbolo != "sfim") {
 						analisaComandoSimples();
@@ -186,7 +186,7 @@ public class Main {
 	public static void analisaAtribChProcedimento() throws SintaticoException, IOException, LexicoException, SemanticoException {
 		auxToken = token;
 		token = analisadorLexico.getToken();
-		if (token.simbolo.equals("satribuicao")) {
+		if (token.simbolo == "satribuicao") {
 			
 			if (!tabelaSimbolos.verificaDeclaradoTudo(auxToken.lexema, nivelList)) {
 				throw new SemanticoException("Erro Semantico do token <" + auxToken.simbolo + "(" + auxToken.lexema
@@ -233,7 +233,7 @@ public class Main {
 			
 			
 			
-			if (auxToken.simbolo.equals("variavel inteiro")) {
+			if (auxToken.simbolo == "variavel inteiro") {
 				if (!geradorCodigo.validaPostFixInteiro(auxPostfix)) {
 					throw new SemanticoException("Erro Semantico do token <" + token.simbolo + "(" + token.lexema
 							+ ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
@@ -242,7 +242,7 @@ public class Main {
 				// dar store
 				geradorCodigo.geraStr(tabelaSimbolos.returnVarRotulo(auxToken.lexema, nivelList));
 			} else {
-				if (auxToken.simbolo.equals("variavel booleano")) {
+				if (auxToken.simbolo == "variavel booleano") {
 					if (!geradorCodigo.validaPostFixBooleano(auxPostfix)) {
 						throw new SemanticoException("Erro Semantico do token <" + token.simbolo + "(" + token.lexema
 								+ ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
@@ -251,7 +251,7 @@ public class Main {
 					// dar store
 					geradorCodigo.geraStr(tabelaSimbolos.returnVarRotulo(auxToken.lexema, nivelList));
 				} else {
-					if (auxToken.simbolo.equals("funcao inteiro")) {
+					if (auxToken.simbolo == "funcao inteiro") {
 						if (procurandoRetorno == true) {
 							// substitui ultimo caracter por S caso achar retorno
 							seEntaoStack.set(seEntaoStack.size() - 1, seEntaoStack.get(seEntaoStack.size() - 1).substring(0,seEntaoStack.get(seEntaoStack.size() - 1).length() - 1) + "S");
@@ -268,14 +268,14 @@ public class Main {
 						int allocQtd = 0;
 						int allocStart = 0;
 						if (allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1) > 0) {
-							for (int dallocIndex = 0; dallocIndex < allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex++) {
-								allocQtd += allocStack.get(allocStack.size() - 1 - dallocIndex);
-								allocStart += allocStack.get(allocStack.size() - 2 - dallocIndex);
+							for (int dallocIndex = 0; dallocIndex  < allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex++) {
+								allocQtd += allocStack.get(allocStack.size() - 1 - dallocIndex * 2);
+								allocStart = allocStack.get(allocStack.size() - 2 - dallocIndex * 2);
 							}
 						}
 						geradorCodigo.geraReturnF(allocStart, allocQtd);
 					} else {
-						if (auxToken.simbolo.equals("funcao booleano")) {
+						if (auxToken.simbolo == "funcao booleano") {
 							if (procurandoRetorno == true) {
 								// substitui ultimo caracter por S caso achar retorno
 								seEntaoStack.set(seEntaoStack.size() - 1, seEntaoStack.get(seEntaoStack.size() - 1).substring(0,seEntaoStack.get(seEntaoStack.size() - 1).length() - 1) + "S");
@@ -292,9 +292,9 @@ public class Main {
 							int allocQtd = 0;
 							int allocStart = 0;
 							if (allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1) > 0) {
-								for (int dallocIndex = 0; dallocIndex < allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex++) {
-									allocQtd += allocStack.get(allocStack.size() - 1 - dallocIndex);
-									allocStart += allocStack.get(allocStack.size() - 1 - dallocIndex);
+								for (int dallocIndex = 0; dallocIndex  < allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex++) {
+									allocQtd += allocStack.get(allocStack.size() - 1 - dallocIndex * 2);
+									allocStart = allocStack.get(allocStack.size() - 2 - dallocIndex * 2);
 								}
 							}
 							geradorCodigo.geraReturnF(allocStart, allocQtd);
@@ -316,6 +316,7 @@ public class Main {
 		infixList = new ArrayList<Token>();
 		token = analisadorLexico.getToken();
 		int auxRot, auxRot2;
+		auxRot2 = 0;
 		analisaExpressao();
 		
 		// gera posfix para comando se
@@ -339,7 +340,7 @@ public class Main {
 		
 		
 		
-		if (token.simbolo.equals("sentao")) {
+		if (token.simbolo == "sentao") {
 			geradorCodigo.geraJmpF(rotulo);
 			auxRot = rotulo;
 			rotulo++;
@@ -347,15 +348,19 @@ public class Main {
 			token = analisadorLexico.getToken();
 			analisaComandoSimples();
 			
-			geradorCodigo.geraJmpF(rotulo);
-			auxRot2 = rotulo;
-			rotulo++;
+			if (token.simbolo == "ssenao") {
+				geradorCodigo.geraJmp(rotulo);
+				auxRot2 = rotulo;
+				rotulo++;
+			}
 			
-			if (token.simbolo.equals("ssenao")) {
+			geradorCodigo.geraNull(auxRot);
+			
+			
+			if (token.simbolo == "ssenao") {
 				if (procurandoRetorno == true) {
 					seEntaoStack.add("ssenaoN");
 				}
-				geradorCodigo.geraNull(auxRot);
 				token = analisadorLexico.getToken();
 				analisaComandoSimples();
 				geradorCodigo.geraNull(auxRot2);
@@ -418,7 +423,7 @@ public class Main {
 		
 		geradorCodigo.geraCodigoDaPosfix(postfixList, tabelaSimbolos, nivelList);
 		
-		if (token.simbolo.equals("sfaca")) {
+		if (token.simbolo == "sfaca") {
 			// auxrot2 := rotulo
 			auxrot2 = rotulo;
 			
@@ -445,15 +450,15 @@ public class Main {
 
 	public static void analisaLeia() throws SintaticoException, SemanticoException, IOException, LexicoException {
 		token = analisadorLexico.getToken();
-		if (token.simbolo.equals("sabre_parenteses")) {
+		if (token.simbolo == "sabre_parenteses") {
 			token = analisadorLexico.getToken();
-			if (token.simbolo.equals("sidentificador")) {
+			if (token.simbolo == "sidentificador") {
 //					Pesquisa em toda tabela ?
 					if (tabelaSimbolos.verificaVarDeclarada(token.lexema, nivelList)) {
 						geradorCodigo.geraRd();
 						geradorCodigo.geraStr(tabelaSimbolos.returnVarRotulo(token.lexema, nivelList));
 						token = analisadorLexico.getToken();
-						if (token.simbolo.equals("sfecha_parenteses")) {
+						if (token.simbolo == "sfecha_parenteses") {
 							token = analisadorLexico.getToken();
 						} else {
 							throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "("
@@ -476,37 +481,42 @@ public class Main {
 
 	public static void analisaEscreva() throws SintaticoException, SemanticoException, IOException, LexicoException {
 		token = analisadorLexico.getToken();
-		if (token.simbolo.equals("sabre_parenteses")) {
-			token = analisadorLexico.getToken();
-			if (token.simbolo.equals("sidentificador")) {
-				if (tabelaSimbolos.verificaVarDeclarada(token.lexema, nivelList)) {
-					geradorCodigo.geraLdv(tabelaSimbolos.returnVarRotulo(token.lexema, nivelList));
-					geradorCodigo.geraPrn();
+		if (token.simbolo == "sabre_parenteses") {
+			
+					
+					infixList = new ArrayList<Token>();
 					token = analisadorLexico.getToken();
-					if (token.simbolo.equals("sfecha_parenteses")) {
+					analisaExpressao();
+			
+					// gera posfix para comando se
+					postfixList = geradorCodigo.geraPostFix(infixList);
+					
+					ArrayList<Token> auxPostfix = new ArrayList<Token>();
+					for (Token item : postfixList) auxPostfix.add(new Token(item));
+					
+					if (!geradorCodigo.validaPostFixInteiro(auxPostfix)) {
+						throw new SemanticoException("Erro Semantico do token <" + token.simbolo + "(" + token.lexema
+								+ ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
+					}
+					geradorCodigo.geraCodigoDaPosfix(postfixList, tabelaSimbolos, nivelList);
+					
+					geradorCodigo.geraPrn();
+					if (token.simbolo == "sfecha_parenteses") {
 						token = analisadorLexico.getToken();
 					} else {
 						throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema
 								+ ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
 					}
-				} else {
-					throw new SemanticoException("Erro Semantico do token <" + token.simbolo + "(" + token.lexema + ")>"
-							+ " na linha:" + token.linha + ", coluna:" + token.coluna);
-				}
-			} else {
-				throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
-						+ " na linha:" + token.linha + ", coluna:" + token.coluna);
-			}
 		} else {
 			throw new SintaticoException("Erro Sintatico na linha:" + token.linha);
 		}
 	}
 
 	public static void analisaFator() throws SintaticoException, IOException, LexicoException, SemanticoException {
-		if (token.simbolo.equals("sidentificador")) {
+		if (token.simbolo == "sidentificador") {
 			// se pesquisaTabela(token.lexema, nivel, ind)
 			if (tabelaSimbolos.verificaDeclaradoTudo(token.getLexema(), nivelList)) {
-				// se (TabSimb[ind].tipo.equals("funcao inteiro") ou (TabSimb[ind].tipo.equals("funcao booleano")
+				// se (TabSimb[ind].tipo == "funcao inteiro") ou (TabSimb[ind].tipo == "funcao booleano")
 				if (tabelaSimbolos.verificaIndentificadorFuncao(token.getLexema(), nivelList)) {
 					switch (tabelaSimbolos.verificaTipoIndentificador(token.lexema, nivelList)) {
 					case 3:
@@ -536,20 +546,20 @@ public class Main {
 						+ " na linha:" + token.linha + ", coluna:" + token.coluna);
 			}
 		} else {
-			if (token.simbolo.equals("snumero")) {
+			if (token.simbolo == "snumero") {
 				infixList.add(token);
 				token = analisadorLexico.getToken();
 			} else {
-				if (token.simbolo.equals("snao")) {
+				if (token.simbolo == "snao") {
 					infixList.add(token);
 					token = analisadorLexico.getToken();
 					analisaFator();
 				} else {
-					if (token.simbolo.equals("sabre_parenteses")) {
+					if (token.simbolo == "sabre_parenteses") {
 						infixList.add(token);
 						token = analisadorLexico.getToken();
 						analisaExpressao();
-						if (token.simbolo.equals("sfecha_parenteses")) {
+						if (token.simbolo == "sfecha_parenteses") {
 							infixList.add(token);
 							token = analisadorLexico.getToken();
 						} else {
@@ -572,8 +582,8 @@ public class Main {
 
 	public static void analisaExpressao() throws IOException, LexicoException, SintaticoException, SemanticoException {
 		analisaExpressaoSimples();
-		if (token.simbolo.equals("smaior") || token.simbolo.equals("smaiorig") || token.simbolo.equals("sig")
-				|| token.simbolo.equals("smenor") || token.simbolo.equals("smenorig") || token.simbolo.equals("sdif")) {
+		if (token.simbolo == "smaior" || token.simbolo == "smaiorig" || token.simbolo == "sig"
+				|| token.simbolo == "smenor" || token.simbolo == "smenorig" || token.simbolo == "sdif") {
 			infixList.add(token);
 			token = analisadorLexico.getToken();
 			analisaExpressaoSimples();
@@ -581,12 +591,12 @@ public class Main {
 	}
 
 	public static void analisaExpressaoSimples() throws IOException, LexicoException, SintaticoException, SemanticoException {
-		if (token.simbolo.equals("smais") || token.simbolo.equals("smenos")) { // caso der erro colocar token.simbolo.equals("smais" || de volta
+		if (token.simbolo == "smais" || token.simbolo == "smenos") { // caso der erro colocar token.simbolo == "smais" || de volta
 			infixList.add(token);
 			token = analisadorLexico.getToken();
 		}
 		analisaTermo();
-		while (token.simbolo.equals("smais") || token.simbolo.equals("smenos") || token.simbolo.equals("sou")) {
+		while (token.simbolo == "smais" || token.simbolo == "smenos" || token.simbolo == "sou") {
 			infixList.add(token);
 			token = analisadorLexico.getToken();
 			analisaTermo();
@@ -595,7 +605,7 @@ public class Main {
 
 	public static void analisaTermo() throws SintaticoException, IOException, LexicoException, SemanticoException {
 		analisaFator();
-		while (token.simbolo.equals("smult") || token.simbolo.equals("sdiv") || token.simbolo.equals("se")) {
+		while (token.simbolo == "smult" || token.simbolo == "sdiv" || token.simbolo == "se") {
 			infixList.add(token);
 			token = analisadorLexico.getToken();
 			analisaFator();
@@ -603,13 +613,13 @@ public class Main {
 	}
 
 	public static void analisaEtVariaveis() throws SintaticoException, SemanticoException, IOException, LexicoException {
-		if (token.simbolo.equals("svar")) {
+		if (token.simbolo == "svar") {
 			variaveisDeclaradas = 0;
 			token = analisadorLexico.getToken();
-			if (token.simbolo.equals("sidentificador")) {
-				while (token.simbolo.equals("sidentificador")) {
+			if (token.simbolo == "sidentificador") {
+				while (token.simbolo == "sidentificador") {
 					analisaVariaveis();
-					if (token.simbolo.equals("sponto_virgula")) {
+					if (token.simbolo == "sponto_virgula") {
 						token = analisadorLexico.getToken();
 					} else {
 						throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema
@@ -625,15 +635,15 @@ public class Main {
 
 	public static void analisaVariaveis() throws SintaticoException, SemanticoException, IOException, LexicoException {
 		do {
-			if (token.simbolo.equals("sidentificador")) {
+			if (token.simbolo == "sidentificador") {
 				if (!tabelaSimbolos.verificaDeclaDuplicVar(token.lexema, nivelList)) {
 					tabelaSimbolos.insereTabela(token.lexema, "variavel", nivelList.get(nivelList.size() - 1), rotuloVariavel++);
 					variaveisDeclaradas++;
 					token = analisadorLexico.getToken();
-					if (token.simbolo.equals("svirgula") || token.simbolo.equals("sdoispontos")) {
-						if (token.simbolo.equals("svirgula")) {
+					if (token.simbolo == "svirgula" || token.simbolo == "sdoispontos") {
+						if (token.simbolo == "svirgula") {
 							token = analisadorLexico.getToken();
-							if (token.simbolo.equals("sdoispontos")) {
+							if (token.simbolo == "sdoispontos") {
 								throw new SintaticoException(
 										"Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
 												+ " na linha:" + token.linha + ", coluna:" + token.coluna);
@@ -681,7 +691,7 @@ public class Main {
 		int flag = 0;
 		
 		// flag = 0
-		if (token.simbolo.equals("sprocedimento") || token.simbolo.equals("sfuncao")) {
+		if (token.simbolo == "sprocedimento" || token.simbolo == "sfuncao") {
 			// auxrot := rotulo
 			auxrot = rotulo;
 			
@@ -694,14 +704,14 @@ public class Main {
 			// flag = 1
 			flag = 1;
 		}
-		while (token.simbolo.equals("sprocedimento") || token.simbolo.equals("sfuncao")) {
+		while (token.simbolo == "sprocedimento" || token.simbolo == "sfuncao") {
 			allocPerFuncProcStack.add(0);
-			if (token.simbolo.equals("sprocedimento")) {
+			if (token.simbolo == "sprocedimento") {
 				analisaDeclaracaoProcedimento();
 			} else {
 				analisaDeclaracaoFuncao();
 			}
-			if (token.simbolo.equals("sponto_virgula")) {
+			if (token.simbolo == "sponto_virgula") {
 				token = analisadorLexico.getToken();
 			} else {
 				throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
@@ -721,7 +731,7 @@ public class Main {
 		nivelMax++;
 		nivelList.add(nivelMax);
 
-		if (token.simbolo.equals("sidentificador")) {
+		if (token.simbolo == "sidentificador") {
 			// pesquisa_declproc_tabela(token.lexema)
 			if (!tabelaSimbolos.verificaDeclaDuplicProc(token.lexema, nivelList)) {
 				// se nao encontrou
@@ -741,7 +751,7 @@ public class Main {
 				
 				token = analisadorLexico.getToken();
 
-				if (token.simbolo.equals("sponto_virgula")) {
+				if (token.simbolo == "sponto_virgula") {
 					analisaBloco();
 					procFunDeclaPath.remove(procFunDeclaPath.size() - 1);
 					if (allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1) > 0) {
@@ -774,7 +784,7 @@ public class Main {
 		// nivel := "L" (marca ou novo galho)
 		nivelMax++;
 		nivelList.add(nivelMax);
-		if (token.simbolo.equals("sidentificador")) {
+		if (token.simbolo == "sidentificador") {
 			// pesquisa_declfunc_tabela(token.lexema) se tem identificador duplicado
 			if (!tabelaSimbolos.verificaDeclaDuplicProc(token.simbolo, nivelList)) {
 				// se nao encontrou
@@ -783,18 +793,18 @@ public class Main {
 				auxToken = token;
 				token = analisadorLexico.getToken();
 
-				if (token.simbolo.equals("sdoispontos")) {
+				if (token.simbolo == "sdoispontos") {
 					token = analisadorLexico.getToken();
 
-					if (token.simbolo.equals("sinteiro") || token.simbolo.equals("sbooleano")) {
+					if (token.simbolo == "sinteiro" || token.simbolo == "sbooleano") {
 						// se (token.simbolo = sinteiro)
-						if (token.simbolo.equals("sinteiro")) {
+						if (token.simbolo == "sinteiro") {
 							// TABSIMG[pc].tipo := "funcao inteiro"
 							tabelaSimbolos.insereTabela(auxToken.getLexema(), "funcao inteiro", nivelList.get(nivelList.size() - 2), rotulo);
 							
 						}
 						// senao
-						if (token.simbolo.equals("sbooleano")) {
+						if (token.simbolo == "sbooleano") {
 							// TABSIMG[pc].tipo := "funcao booleano"
 							tabelaSimbolos.insereTabela(auxToken.getLexema(), "funcao booleano", nivelList.get(nivelList.size() - 2), rotulo);
 
@@ -806,7 +816,7 @@ public class Main {
 						
 						token = analisadorLexico.getToken();
 
-						if (token.simbolo.equals("sponto_virgula")) {
+						if (token.simbolo == "sponto_virgula") {
 							analisaBloco();
 							
 							procFunDeclaPath.remove(procFunDeclaPath.size() - 1);
@@ -840,7 +850,7 @@ public class Main {
 	}
 
 	public static void chamadaProcedimento() throws SintaticoException, IOException, LexicoException {
-		if (token.simbolo.equals("sponto_virgula")) {
+		if (token.simbolo == "sponto_virgula") {
 			// gera codigo call para label do procedimento
 //			System.out.println(token.getLexema());
 			geradorCodigo.geraCall(tabelaSimbolos.returnProcFuncRotulo(auxToken.lexema, nivelList));
@@ -851,10 +861,10 @@ public class Main {
 	}
 	public static void chamadaFuncao() throws SintaticoException, IOException, LexicoException {
 		token = analisadorLexico.getToken();
-		if (token.simbolo.equals("sponto_virgula") || token.simbolo.equals("smult") || token.simbolo.equals("sdiv") || token.simbolo.equals("smais") 
-				|| token.simbolo.equals("smenos") || token.simbolo.equals("smaior") || token.simbolo.equals("smaiorig")
-				|| token.simbolo.equals("smenor") || token.simbolo.equals("smenorig") || token.simbolo.equals("sig") 
-				|| token.simbolo.equals("sdif") || token.simbolo.equals("se") || token.simbolo.equals("sou")) {
+		if (token.simbolo == "sponto_virgula" || token.simbolo == "smult" || token.simbolo == "sdiv" || token.simbolo == "smais" 
+				|| token.simbolo == "smenos" || token.simbolo == "smaior" || token.simbolo == "smaiorig" 
+				|| token.simbolo == "smenor" || token.simbolo == "smenorig" || token.simbolo == "sig" 
+				|| token.simbolo == "sdif" || token.simbolo == "se" || token.simbolo == "sou" || token.simbolo == "sentao" || token.simbolo == "sfaca" || token.simbolo == "sfecha_parenteses") {
 		} else {
 			throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
 					+ " na linha:" + token.linha + ", coluna:" + token.coluna);
