@@ -26,7 +26,7 @@ public class Main {
 	public static void main(String[] args) throws IOException, LexicoException, SintaticoException, SemanticoException {
 
 		try {
-			analisadorLexico = new AnalisadorLexico("testeRafa3.txt");
+			analisadorLexico = new AnalisadorLexico("teste_final_1.txt");
 			geradorCodigo = new GeradorCodigo();
 			procFuncRotuloStack = new ArrayList<Integer>();
 			allocStack = new ArrayList<Integer>();
@@ -122,9 +122,11 @@ public class Main {
 			procurandoRetorno = false;
 		}
 		analisaComandos();
-		if (seEntaoStack.get(seEntaoStack.size() - 1) == "smainN") {
-			throw new SemanticoException("Erro Semantico do token <" + auxToken.simbolo + "(" + auxToken.lexema
-					+ ")>" + " na linha:" + auxToken.linha + ", coluna:" + auxToken.coluna);
+		if (procurandoRetorno == true) {
+			if (seEntaoStack.get(seEntaoStack.size() - 1) == "smainN") {
+				throw new SemanticoException("Erro Semantico do token <" + auxToken.simbolo + "(" + auxToken.lexema
+						+ ")>" + " na linha:" + auxToken.linha + ", coluna:" + auxToken.coluna);
+			}
 		}
 	}
 
@@ -204,6 +206,7 @@ public class Main {
 		           //System.out.print("<" + postfix.lexema + "(" + postfix.simbolo + ")>"); 		
 				System.out.print(postfix.lexema);
 			}
+			
 			System.out.println("");
 			
 			switch (tabelaSimbolos.verificaTipoIndentificador(auxToken.lexema, nivelList)) {
@@ -369,8 +372,10 @@ public class Main {
 					}
 				}
 			} else {
-				// caso n tiver retorno desempilha ultimo por n garantir retorno
-				seEntaoStack.remove(seEntaoStack.size() - 1);
+				if (procurandoRetorno == true) {
+					// caso n tiver retorno desempilha ultimo por n garantir retorno
+					seEntaoStack.remove(seEntaoStack.size() - 1);
+				}
 			}
 		} else {
 			throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
@@ -552,7 +557,7 @@ public class Main {
 									+ token.lexema + ")>" + " na linha:" + token.linha + ", coluna:" + token.coluna);
 						}
 					} else {
-						if (token.lexema == "verdadeiro" || token.lexema == "falso") {
+						if (token.lexema.equals("verdadeiro") || token.lexema.equals("falso")) {
 							infixList.add(token);
 							token = analisadorLexico.getToken();
 						} else {
@@ -576,7 +581,7 @@ public class Main {
 	}
 
 	public static void analisaExpressaoSimples() throws IOException, LexicoException, SintaticoException, SemanticoException {
-		if (token.simbolo == "smenos") { // caso der erro colocar token.simbolo == "smais" || de volta
+		if (token.simbolo == "smais" || token.simbolo == "smenos") { // caso der erro colocar token.simbolo == "smais" || de volta
 			infixList.add(token);
 			token = analisadorLexico.getToken();
 		}

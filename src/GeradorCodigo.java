@@ -16,24 +16,29 @@ public class GeradorCodigo {
 
 		while (infixIndex < infix.size()) {
 			if (infix.get(infixIndex).simbolo == "snao") {
-				while (postfixStack.size() > 0) {
-					if (infixIndex >= infix.size()) {
-						
-					}
-					if (postfixStack.get(postfixStack.size() - 1).simbolo == "sabre_parenteses") {
-						postfixStack.add(infix.get(infixIndex));
-						break;
-					}
-					if (postOperand(infix.get(infixIndex)) <= postOperand(postfixStack.get(postfixStack.size() - 1))) {
-						postFix.add(postfixStack.get(postfixStack.size() - 1));
-						postfixStack.remove(postfixStack.size() - 1);
-					} else {
-						postfixStack.add(infix.get(infixIndex));
-						break;
+				if (infixIndex == 0) {
+					postfixStack.add(infix.get(infixIndex));
+				} else {
+					while (postfixStack.size() > 0) {
+						if (infixIndex >= infix.size()) {
+							
+						}
+						if (postfixStack.get(postfixStack.size() - 1).simbolo == "sabre_parenteses") {
+							postfixStack.add(infix.get(infixIndex));
+							break;
+						}
+						if (postOperand(infix.get(infixIndex)) <= postOperand(postfixStack.get(postfixStack.size() - 1))) {
+							postFix.add(postfixStack.get(postfixStack.size() - 1));
+							postfixStack.remove(postfixStack.size() - 1);
+						} else {
+							postfixStack.add(infix.get(infixIndex));
+							break;
+						}
 					}
 				}
+				
 			} else {
-				if (infix.get(infixIndex).simbolo == "smenos") {
+				if (infix.get(infixIndex).simbolo == "smenos" || infix.get(infixIndex).simbolo == "smais") {
 					if (infixIndex == 0) {
 						infix.get(infixIndex).simbolo += "unitario";
 						postfixStack.add(infix.get(infixIndex));
@@ -128,7 +133,7 @@ public class GeradorCodigo {
 	}
 	
 	private int postOperand(Token token) {
-		if (token.getSimbolo() == "smenosunitario" || token.getSimbolo() == "snao") {
+		if (token.getSimbolo() == "smenosunitario" || token.getSimbolo() == "smaisunitario" || token.getSimbolo() == "snao") {
 			return 6;
 		} else {
 			if (token.getSimbolo() == "smult" || token.getSimbolo() == "sdiv") {
@@ -359,7 +364,7 @@ public class GeradorCodigo {
 								return false;
 							}
 						} else {
-							if (postFix.get(postFixIndex).simbolo == "smenosunitario") {
+							if (postFix.get(postFixIndex).simbolo.equals("smenosunitario") || postFix.get(postFixIndex).simbolo.equals("smaisunitario")) {
 									if (postFix.get(postFixIndex - 1).simbolo == "variavel inteiro" || postFix.get(postFixIndex - 1).simbolo == "funcao inteiro" || postFix.get(postFixIndex - 1).simbolo == "snumero") {
 										postFix.remove(postFixIndex);
 										auxToken = postFix.get(postFixIndex - 1);
