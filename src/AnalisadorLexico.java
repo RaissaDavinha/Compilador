@@ -203,6 +203,10 @@ public class AnalisadorLexico {
 					token.setSimbolo("se");
 					break;
 					
+				case "ou":
+					token.setSimbolo("sou");
+					break;
+					
 				case "nao":
 					token.setSimbolo("snao");
 					break;
