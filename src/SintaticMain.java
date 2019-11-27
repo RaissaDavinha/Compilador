@@ -8,8 +8,8 @@ public class SintaticMain {
 	static Token auxToken = new Token();
 	static AnalisadorLexico analisadorLexico;
 	static GeradorCodigo geradorCodigo;
-	static TabelaSimbolos tabelaSimbolos = new TabelaSimbolos();
-	static ArrayList<Integer> nivelList = new ArrayList<Integer>();
+	static TabelaSimbolos tabelaSimbolos;
+	static ArrayList<Integer> nivelList;
 	static ArrayList<Token> infixList;
 	static ArrayList<Token> postfixList;
 	static int nivelMax = 0;
@@ -26,6 +26,17 @@ public class SintaticMain {
 	public static void sintaticMain(String file) throws IOException, LexicoException, SintaticoException, SemanticoException {
 
 		try {
+			seEntaoStack = new ArrayList<String>();
+			variaveisDeclaradas = 0;
+			nivelList = new ArrayList<Integer>();
+			tabelaSimbolos = new TabelaSimbolos();
+			token = new Token();
+			infixList = new ArrayList<Token>();
+			postfixList = new ArrayList<Token>();
+			nivelMax = 0;
+			allocIndex = 0;
+			rotuloVariavel = 0;
+			procurandoRetorno = false;
 			analisadorLexico = new AnalisadorLexico(file);
 			geradorCodigo = new GeradorCodigo();
 			procFuncRotuloStack = new ArrayList<Integer>();
