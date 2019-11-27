@@ -519,7 +519,7 @@ public class GeradorCodigo {
 	}
 
 	public void geraDiv() {
-		codigoGerado += "DIV" + "\n"; 
+		codigoGerado += "DIVI" + "\n"; 
 	}
 
 	public void geraInv() {
