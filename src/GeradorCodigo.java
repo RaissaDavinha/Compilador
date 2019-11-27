@@ -45,7 +45,7 @@ public class GeradorCodigo {
 					} else {
 						if (!(infix.get(infixIndex - 1).simbolo.equals("variavel inteiro") || infix.get(infixIndex - 1).simbolo.equals("variavel booleano") || infix.get(infixIndex - 1).simbolo.equals("snumero")
 							|| infix.get(infixIndex - 1).simbolo.equals("funcao booleano") || infix.get(infixIndex - 1).simbolo.equals("funcao inteiro") || infix.get(infixIndex - 1).simbolo.equals("sverdadeiro")
-							|| infix.get(infixIndex - 1).simbolo.equals("sfalso"))) { // se o token antes do operador menos/nao for um operador
+							|| infix.get(infixIndex - 1).simbolo.equals("sfalso") || infix.get(infixIndex - 1).simbolo.equals("sfecha_parenteses"))) { // se o token antes do operador menos/nao for um operador
 							// os operadores sao unitarios
 							infix.get(infixIndex).simbolo += "unitario";
 						}
