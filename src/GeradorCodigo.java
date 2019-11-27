@@ -15,7 +15,7 @@ public class GeradorCodigo {
 		int infixIndex = 0;
 
 		while (infixIndex < infix.size()) {
-			if (infix.get(infixIndex).simbolo == "snao") {
+			if (infix.get(infixIndex).simbolo.equals("snao")) {
 				if (infixIndex == 0) {
 					postfixStack.add(infix.get(infixIndex));
 				} else {
@@ -23,7 +23,7 @@ public class GeradorCodigo {
 						if (infixIndex >= infix.size()) {
 							
 						}
-						if (postfixStack.get(postfixStack.size() - 1).simbolo == "sabre_parenteses") {
+						if (postfixStack.get(postfixStack.size() - 1).simbolo.equals("sabre_parenteses")) {
 							postfixStack.add(infix.get(infixIndex));
 							break;
 						}
@@ -38,28 +38,28 @@ public class GeradorCodigo {
 				}
 				
 			} else {
-				if (infix.get(infixIndex).simbolo == "smenos" || infix.get(infixIndex).simbolo == "smais") {
+				if (infix.get(infixIndex).simbolo.equals("smenos") || infix.get(infixIndex).simbolo.equals("smais")) {
 					if (infixIndex == 0) {
 						infix.get(infixIndex).simbolo += "unitario";
 						postfixStack.add(infix.get(infixIndex));
 					} else {
-						if (!(infix.get(infixIndex - 1).simbolo == "variavel inteiro" || infix.get(infixIndex - 1).simbolo == "variavel booleano" || infix.get(infixIndex - 1).simbolo == "snumero"
-							|| infix.get(infixIndex - 1).simbolo == "funcao booleano" || infix.get(infixIndex - 1).simbolo == "funcao inteiro" || infix.get(infixIndex - 1).simbolo == "sverdadeiro"
-							|| infix.get(infixIndex - 1).simbolo == "sfalso")) { // se o token antes do operador menos/nao for um operador
+						if (!(infix.get(infixIndex - 1).simbolo.equals("variavel inteiro") || infix.get(infixIndex - 1).simbolo.equals("variavel booleano") || infix.get(infixIndex - 1).simbolo.equals("snumero")
+							|| infix.get(infixIndex - 1).simbolo.equals("funcao booleano") || infix.get(infixIndex - 1).simbolo.equals("funcao inteiro") || infix.get(infixIndex - 1).simbolo.equals("sverdadeiro")
+							|| infix.get(infixIndex - 1).simbolo.equals("sfalso"))) { // se o token antes do operador menos/nao for um operador
 							// os operadores sao unitarios
 							infix.get(infixIndex).simbolo += "unitario";
 						}
 						if (postfixStack.size() <= 0) {
 							postfixStack.add(infix.get(infixIndex));
 						} else {
-							if (postfixStack.get(postfixStack.size() - 1).simbolo == "sabre_parenteses") {
+							if (postfixStack.get(postfixStack.size() - 1).simbolo.equals("sabre_parenteses")) {
 								postfixStack.add(infix.get(infixIndex));
 							} else {
 								if (postOperand(infix.get(infixIndex)) <= postOperand(postfixStack.get(postfixStack.size() - 1))) {
 									postFix.add(postfixStack.get(postfixStack.size() - 1));
 									postfixStack.remove(postfixStack.size() - 1);
 									while (postfixStack.size() > 0) {
-										if (postfixStack.get(postfixStack.size() - 1).simbolo == "sabre_parenteses") {
+										if (postfixStack.get(postfixStack.size() - 1).simbolo.equals("sabre_parenteses")) {
 											break;
 										}
 										if (postOperand(infix.get(infixIndex)) <= postOperand(postfixStack.get(postfixStack.size() - 1))) {
@@ -81,14 +81,14 @@ public class GeradorCodigo {
 						if (postfixStack.size() <= 0) {
 							postfixStack.add(infix.get(infixIndex));
 						} else {
-							if (postfixStack.get(postfixStack.size() - 1).simbolo == "sabre_parenteses") {
+							if (postfixStack.get(postfixStack.size() - 1).simbolo.equals("sabre_parenteses")) {
 								postfixStack.add(infix.get(infixIndex));
 							} else {
 								if (postOperand(infix.get(infixIndex)) <= postOperand(postfixStack.get(postfixStack.size() - 1))) {
 									postFix.add(postfixStack.get(postfixStack.size() - 1));
 									postfixStack.remove(postfixStack.size() - 1);
 									while (postfixStack.size() > 0) {
-										if (postfixStack.get(postfixStack.size() - 1).simbolo == "sabre_parenteses") {
+										if (postfixStack.get(postfixStack.size() - 1).simbolo.equals("sabre_parenteses")) {
 											break;
 										}
 										if (postOperand(infix.get(infixIndex)) <= postOperand(postfixStack.get(postfixStack.size() - 1))) {
@@ -105,15 +105,15 @@ public class GeradorCodigo {
 							}
 						}
 					} else {
-						if (infix.get(infixIndex).simbolo == "variavel inteiro" || infix.get(infixIndex).simbolo == "variavel booleano" || infix.get(infixIndex).simbolo == "snumero"
-								|| infix.get(infixIndex).simbolo == "funcao booleano" || infix.get(infixIndex).simbolo == "funcao inteiro" || infix.get(infixIndex).simbolo == "sverdadeiro"
-								|| infix.get(infixIndex).simbolo == "sfalso") {
+						if (infix.get(infixIndex).simbolo.equals("variavel inteiro") || infix.get(infixIndex).simbolo.equals("variavel booleano") || infix.get(infixIndex).simbolo.equals("snumero")
+								|| infix.get(infixIndex).simbolo.equals("funcao booleano") || infix.get(infixIndex).simbolo.equals("funcao inteiro") || infix.get(infixIndex).simbolo.equals("sverdadeiro")
+								|| infix.get(infixIndex).simbolo.equals("sfalso")) {
 								postFix.add(infix.get(infixIndex));
 						} else {
-							if (infix.get(infixIndex).simbolo == "sabre_parenteses") {
+							if (infix.get(infixIndex).simbolo.equals("sabre_parenteses")) {
 								postfixStack.add(infix.get(infixIndex));
 							} else {
-								if (infix.get(infixIndex).simbolo == "sfecha_parenteses") {
+								if (infix.get(infixIndex).simbolo.equals("sfecha_parenteses")) {
 									while (postfixStack.get(postfixStack.size() - 1).simbolo != "sabre_parenteses") {
 										postFix.add(postfixStack.get(postfixStack.size() - 1));
 										postfixStack.remove(postfixStack.size() - 1);	
@@ -123,14 +123,14 @@ public class GeradorCodigo {
 									if (postfixStack.size() <= 0) {
 										postfixStack.add(infix.get(infixIndex));
 									} else {
-										if (postfixStack.get(postfixStack.size() - 1).simbolo == "sabre_parenteses") {
+										if (postfixStack.get(postfixStack.size() - 1).simbolo.equals("sabre_parenteses")) {
 											postfixStack.add(infix.get(infixIndex));
 										} else {
 											if (postOperand(infix.get(infixIndex)) <= postOperand(postfixStack.get(postfixStack.size() - 1))) {
 												postFix.add(postfixStack.get(postfixStack.size() - 1));
 												postfixStack.remove(postfixStack.size() - 1);
 												while (postfixStack.size() > 0) {
-													if (postfixStack.get(postfixStack.size() - 1).simbolo == "sabre_parenteses") {
+													if (postfixStack.get(postfixStack.size() - 1).simbolo.equals("sabre_parenteses")) {
 														break;
 													}
 													if (postOperand(infix.get(infixIndex)) <= postOperand(postfixStack.get(postfixStack.size() - 1))) {
@@ -163,22 +163,22 @@ public class GeradorCodigo {
 	}
 	
 	private int postOperand(Token token) {
-		if (token.getSimbolo().equals("smenosunitario") || token.getSimbolo() == "smaisunitario" || token.getSimbolo() == "snao") {
+		if (token.getSimbolo().equals("smenosunitario") || token.getSimbolo().equals("smaisunitario") || token.getSimbolo().equals("snao")) {
 			return 6;
 		} else {
-			if (token.getSimbolo() == "smult" || token.getSimbolo() == "sdiv") {
+			if (token.getSimbolo().equals("smult") || token.getSimbolo().equals("sdiv")) {
 				return 5;
 			} else {
-				if (token.getSimbolo() == "smais" || token.getSimbolo() == "smenos") {
+				if (token.getSimbolo().equals("smais") || token.getSimbolo().equals("smenos")) {
 					return 4;
 				}
-				if (token.getSimbolo() == "smaior" || token.getSimbolo() == "smenor" || token.getSimbolo() == "smaiorig" || token.getSimbolo() == "smenorig" || token.getSimbolo() == "sig" || token.getSimbolo() == "sdif") {
+				if (token.getSimbolo().equals("smaior") || token.getSimbolo().equals("smenor") || token.getSimbolo().equals("smaiorig") || token.getSimbolo().equals("smenorig") || token.getSimbolo().equals("sig") || token.getSimbolo().equals("sdif")) {
 					return 3;
 				} else {
-					if (token.getSimbolo() == "se") {
+					if (token.getSimbolo().equals("se")) {
 						return 2;
 					} else {
-						if (token.getSimbolo() == "sou") {
+						if (token.getSimbolo().equals("sou")) {
 							return 1;
 						}
 					}
@@ -193,16 +193,16 @@ public class GeradorCodigo {
 		Token auxToken;
 		while (postFix.size() > 1) {
 			postFixIndex = 0;
-			while ((postFix.get(postFixIndex).simbolo == "variavel inteiro" || postFix.get(postFixIndex).simbolo == "variavel booleano" || postFix.get(postFixIndex).simbolo == "snumero"
-					|| postFix.get(postFixIndex).simbolo == "funcao booleano" || postFix.get(postFixIndex).simbolo == "funcao inteiro" || postFix.get(postFixIndex).simbolo == "sverdadeiro"
-					|| postFix.get(postFixIndex).simbolo == "sfalso")) {
+			while ((postFix.get(postFixIndex).simbolo.equals("variavel inteiro") || postFix.get(postFixIndex).simbolo.equals("variavel booleano") || postFix.get(postFixIndex).simbolo.equals("snumero")
+					|| postFix.get(postFixIndex).simbolo.equals("funcao booleano") || postFix.get(postFixIndex).simbolo.equals("funcao inteiro") || postFix.get(postFixIndex).simbolo.equals("sverdadeiro")
+					|| postFix.get(postFixIndex).simbolo.equals("sfalso"))) {
 				postFixIndex++;
 			}
-			if (postFix.get(postFixIndex).simbolo == "sou" || postFix.get(postFixIndex).simbolo == "se") {
-				if (postFix.get(postFixIndex - 1).simbolo == "variavel booleano" || postFix.get(postFixIndex - 1).simbolo == "funcao booleano" || postFix.get(postFixIndex - 1).simbolo == "sverdadeiro"
-						|| postFix.get(postFixIndex - 1).simbolo == "sfalso") {
-					if (postFix.get(postFixIndex - 2).simbolo == "variavel booleano" || postFix.get(postFixIndex - 2).simbolo == "funcao booleano" || postFix.get(postFixIndex - 2).simbolo == "sverdadeiro"
-							|| postFix.get(postFixIndex - 2).simbolo == "sfalso") {
+			if (postFix.get(postFixIndex).simbolo.equals("sou") || postFix.get(postFixIndex).simbolo.equals("se")) {
+				if (postFix.get(postFixIndex - 1).simbolo.equals("variavel booleano") || postFix.get(postFixIndex - 1).simbolo.equals("funcao booleano") || postFix.get(postFixIndex - 1).simbolo.equals("sverdadeiro")
+						|| postFix.get(postFixIndex - 1).simbolo.equals("sfalso")) {
+					if (postFix.get(postFixIndex - 2).simbolo.equals("variavel booleano") || postFix.get(postFixIndex - 2).simbolo.equals("funcao booleano") || postFix.get(postFixIndex - 2).simbolo.equals("sverdadeiro")
+							|| postFix.get(postFixIndex - 2).simbolo.equals("sfalso")) {
 						postFix.remove(postFixIndex);
 						postFix.remove(postFixIndex - 1);
 						auxToken = postFix.get(postFixIndex - 2);
@@ -215,9 +215,9 @@ public class GeradorCodigo {
 					return false;
 				}
 			} else {
-				if (postFix.get(postFixIndex).simbolo == "snao") {
-					if (postFix.get(postFixIndex - 1).simbolo == "variavel booleano" || postFix.get(postFixIndex - 1).simbolo == "funcao booleano" || postFix.get(postFixIndex - 1).simbolo == "sverdadeiro"
-							|| postFix.get(postFixIndex - 1).simbolo == "sfalso") {
+				if (postFix.get(postFixIndex).simbolo.equals("snao")) {
+					if (postFix.get(postFixIndex - 1).simbolo.equals("variavel booleano") || postFix.get(postFixIndex - 1).simbolo.equals("funcao booleano") || postFix.get(postFixIndex - 1).simbolo.equals("sverdadeiro")
+							|| postFix.get(postFixIndex - 1).simbolo.equals("sfalso")) {
 						postFix.remove(postFixIndex);
 						auxToken = postFix.get(postFixIndex - 1);
 						auxToken.simbolo = "variavel booleano";
@@ -226,11 +226,11 @@ public class GeradorCodigo {
 						return false;
 					}
 				} else {
-					if (postFix.get(postFixIndex).simbolo == "sig" || postFix.get(postFixIndex).simbolo == "sdif") {
-						if (postFix.get(postFixIndex - 1).simbolo == "variavel booleano" || postFix.get(postFixIndex - 1).simbolo == "funcao booleano" || postFix.get(postFixIndex - 1).simbolo == "sverdadeiro"
-								|| postFix.get(postFixIndex - 1).simbolo == "sfalso") {
-							if (postFix.get(postFixIndex - 2).simbolo == "variavel booleano" || postFix.get(postFixIndex - 2).simbolo == "funcao booleano" || postFix.get(postFixIndex - 2).simbolo == "sverdadeiro"
-									|| postFix.get(postFixIndex - 2).simbolo == "sfalso") {
+					if (postFix.get(postFixIndex).simbolo.equals("sig") || postFix.get(postFixIndex).simbolo.equals("sdif")) {
+						if (postFix.get(postFixIndex - 1).simbolo.equals("variavel booleano") || postFix.get(postFixIndex - 1).simbolo.equals("funcao booleano") || postFix.get(postFixIndex - 1).simbolo.equals("sverdadeiro")
+								|| postFix.get(postFixIndex - 1).simbolo.equals("sfalso")) {
+							if (postFix.get(postFixIndex - 2).simbolo.equals("variavel booleano") || postFix.get(postFixIndex - 2).simbolo.equals("funcao booleano") || postFix.get(postFixIndex - 2).simbolo.equals("sverdadeiro")
+									|| postFix.get(postFixIndex - 2).simbolo.equals("sfalso")) {
 								postFix.remove(postFixIndex);
 								postFix.remove(postFixIndex - 1);
 								auxToken = postFix.get(postFixIndex - 2);
@@ -240,8 +240,8 @@ public class GeradorCodigo {
 								return false;
 							}
 						} else {
-							if (postFix.get(postFixIndex - 1).simbolo == "variavel inteiro" || postFix.get(postFixIndex - 1).simbolo == "funcao inteiro" || postFix.get(postFixIndex - 1).simbolo == "snumero") {
-								if (postFix.get(postFixIndex - 2).simbolo == "variavel inteiro" || postFix.get(postFixIndex - 2).simbolo == "funcao inteiro" || postFix.get(postFixIndex - 2).simbolo == "snumero") {
+							if (postFix.get(postFixIndex - 1).simbolo.equals("variavel inteiro") || postFix.get(postFixIndex - 1).simbolo.equals("funcao inteiro") || postFix.get(postFixIndex - 1).simbolo.equals("snumero")) {
+								if (postFix.get(postFixIndex - 2).simbolo.equals("variavel inteiro") || postFix.get(postFixIndex - 2).simbolo.equals("funcao inteiro") || postFix.get(postFixIndex - 2).simbolo.equals("snumero")) {
 									postFix.remove(postFixIndex);
 									postFix.remove(postFixIndex - 1);
 									auxToken = postFix.get(postFixIndex - 2);
@@ -255,10 +255,10 @@ public class GeradorCodigo {
 							}
 						}
 					} else {
-						if (postFix.get(postFixIndex).simbolo == "smaior" || postFix.get(postFixIndex).simbolo == "smenor" || postFix.get(postFixIndex).simbolo == "smaiorig"
-						|| postFix.get(postFixIndex).simbolo == "smenorig") {
-							if (postFix.get(postFixIndex - 1).simbolo == "variavel inteiro" || postFix.get(postFixIndex - 1).simbolo == "funcao inteiro" || postFix.get(postFixIndex - 1).simbolo == "snumero") {
-								if (postFix.get(postFixIndex - 2).simbolo == "variavel inteiro" || postFix.get(postFixIndex - 2).simbolo == "funcao inteiro" || postFix.get(postFixIndex - 2).simbolo == "snumero") {
+						if (postFix.get(postFixIndex).simbolo.equals("smaior") || postFix.get(postFixIndex).simbolo.equals("smenor") || postFix.get(postFixIndex).simbolo.equals("smaiorig")
+						|| postFix.get(postFixIndex).simbolo.equals("smenorig")) {
+							if (postFix.get(postFixIndex - 1).simbolo.equals("variavel inteiro") || postFix.get(postFixIndex - 1).simbolo.equals("funcao inteiro") || postFix.get(postFixIndex - 1).simbolo.equals("snumero")) {
+								if (postFix.get(postFixIndex - 2).simbolo.equals("variavel inteiro") || postFix.get(postFixIndex - 2).simbolo.equals("funcao inteiro") || postFix.get(postFixIndex - 2).simbolo.equals("snumero")) {
 									postFix.remove(postFixIndex);
 									postFix.remove(postFixIndex - 1);
 									auxToken = postFix.get(postFixIndex - 2);
@@ -271,8 +271,8 @@ public class GeradorCodigo {
 								return false;
 							}
 						} else {
-							if (postFix.get(postFixIndex).simbolo == "smenosunitario") {
-									if (postFix.get(postFixIndex - 1).simbolo == "variavel inteiro" || postFix.get(postFixIndex - 1).simbolo == "funcao inteiro" || postFix.get(postFixIndex - 1).simbolo == "snumero") {
+							if (postFix.get(postFixIndex).simbolo.equals("smenosunitario")) {
+									if (postFix.get(postFixIndex - 1).simbolo.equals("variavel inteiro") || postFix.get(postFixIndex - 1).simbolo.equals("funcao inteiro") || postFix.get(postFixIndex - 1).simbolo.equals("snumero")) {
 										postFix.remove(postFixIndex);
 										auxToken = postFix.get(postFixIndex - 1);
 										auxToken.simbolo = "variavel inteiro";
@@ -281,10 +281,10 @@ public class GeradorCodigo {
 										return false;
 									}
 							} else {
-								if (postFix.get(postFixIndex).simbolo == "smais" || postFix.get(postFixIndex).simbolo == "smenos"
-								|| postFix.get(postFixIndex).simbolo == "smult" || postFix.get(postFixIndex).simbolo == "sdiv") {
-									if (postFix.get(postFixIndex - 1).simbolo == "variavel inteiro" || postFix.get(postFixIndex - 1).simbolo == "funcao inteiro" || postFix.get(postFixIndex - 1).simbolo == "snumero") {
-										if (postFix.get(postFixIndex - 2).simbolo == "variavel inteiro" || postFix.get(postFixIndex - 2).simbolo == "funcao inteiro" || postFix.get(postFixIndex - 2).simbolo == "snumero") {
+								if (postFix.get(postFixIndex).simbolo.equals("smais") || postFix.get(postFixIndex).simbolo.equals("smenos")
+								|| postFix.get(postFixIndex).simbolo.equals("smult") || postFix.get(postFixIndex).simbolo.equals("sdiv")) {
+									if (postFix.get(postFixIndex - 1).simbolo.equals("variavel inteiro") || postFix.get(postFixIndex - 1).simbolo.equals("funcao inteiro") || postFix.get(postFixIndex - 1).simbolo.equals("snumero")) {
+										if (postFix.get(postFixIndex - 2).simbolo.equals("variavel inteiro") || postFix.get(postFixIndex - 2).simbolo.equals("funcao inteiro") || postFix.get(postFixIndex - 2).simbolo.equals("snumero")) {
 											postFix.remove(postFixIndex);
 											postFix.remove(postFixIndex - 1);
 											auxToken = postFix.get(postFixIndex - 2);
@@ -304,8 +304,8 @@ public class GeradorCodigo {
 			}
 		}
 		postFixIndex = 0;
-		if (postFix.get(postFixIndex).simbolo == "variavel booleano" || postFix.get(postFixIndex).simbolo == "funcao booleano" || postFix.get(postFixIndex).simbolo == "sverdadeiro"
-				|| postFix.get(postFixIndex).simbolo == "sfalso") {
+		if (postFix.get(postFixIndex).simbolo.equals("variavel booleano") || postFix.get(postFixIndex).simbolo.equals("funcao booleano") || postFix.get(postFixIndex).simbolo.equals("sverdadeiro")
+				|| postFix.get(postFixIndex).simbolo.equals("sfalso")) {
 			return true;	
 		}
 		return false;
@@ -316,16 +316,16 @@ public class GeradorCodigo {
 		Token auxToken;
 		while (postFix.size() > 1) {
 			postFixIndex = 0;
-			while ( (postFix.get(postFixIndex).simbolo == "variavel inteiro" || postFix.get(postFixIndex).simbolo == "variavel booleano" || postFix.get(postFixIndex).simbolo == "snumero"
-					|| postFix.get(postFixIndex).simbolo == "funcao booleano" || postFix.get(postFixIndex).simbolo == "funcao inteiro" || postFix.get(postFixIndex).simbolo == "sverdadeiro"
-					|| postFix.get(postFixIndex).simbolo == "sfalso")) {
+			while ( (postFix.get(postFixIndex).simbolo.equals("variavel inteiro") || postFix.get(postFixIndex).simbolo.equals("variavel booleano") || postFix.get(postFixIndex).simbolo.equals("snumero")
+					|| postFix.get(postFixIndex).simbolo.equals("funcao booleano") || postFix.get(postFixIndex).simbolo.equals("funcao inteiro") || postFix.get(postFixIndex).simbolo.equals("sverdadeiro")
+					|| postFix.get(postFixIndex).simbolo.equals("sfalso"))) {
 				postFixIndex++;
 			}
-			if (postFix.get(postFixIndex).simbolo == "sou" || postFix.get(postFixIndex).simbolo == "se") {
-				if (postFix.get(postFixIndex - 1).simbolo == "variavel booleano" || postFix.get(postFixIndex - 1).simbolo == "funcao booleano" || postFix.get(postFixIndex - 1).simbolo == "sverdadeiro"
-						|| postFix.get(postFixIndex - 1).simbolo == "sfalso") {
-					if (postFix.get(postFixIndex - 2).simbolo == "variavel booleano" || postFix.get(postFixIndex - 2).simbolo == "funcao booleano" || postFix.get(postFixIndex - 2).simbolo == "sverdadeiro"
-							|| postFix.get(postFixIndex - 2).simbolo == "sfalso") {
+			if (postFix.get(postFixIndex).simbolo.equals("sou") || postFix.get(postFixIndex).simbolo.equals("se")) {
+				if (postFix.get(postFixIndex - 1).simbolo.equals("variavel booleano") || postFix.get(postFixIndex - 1).simbolo.equals("funcao booleano") || postFix.get(postFixIndex - 1).simbolo.equals("sverdadeiro")
+						|| postFix.get(postFixIndex - 1).simbolo.equals("sfalso")) {
+					if (postFix.get(postFixIndex - 2).simbolo.equals("variavel booleano") || postFix.get(postFixIndex - 2).simbolo.equals("funcao booleano") || postFix.get(postFixIndex - 2).simbolo.equals("sverdadeiro")
+							|| postFix.get(postFixIndex - 2).simbolo.equals("sfalso")) {
 						postFix.remove(postFixIndex);
 						postFix.remove(postFixIndex - 1);
 						auxToken = postFix.get(postFixIndex - 2);
@@ -338,9 +338,9 @@ public class GeradorCodigo {
 					return false;
 				}
 			} else {
-				if (postFix.get(postFixIndex).simbolo == "snao") {
-					if (postFix.get(postFixIndex - 1).simbolo == "variavel booleano" || postFix.get(postFixIndex - 1).simbolo == "funcao booleano" || postFix.get(postFixIndex - 1).simbolo == "sverdadeiro"
-							|| postFix.get(postFixIndex - 1).simbolo == "sfalso") {
+				if (postFix.get(postFixIndex).simbolo.equals("snao")) {
+					if (postFix.get(postFixIndex - 1).simbolo.equals("variavel booleano") || postFix.get(postFixIndex - 1).simbolo.equals("funcao booleano") || postFix.get(postFixIndex - 1).simbolo.equals("sverdadeiro")
+							|| postFix.get(postFixIndex - 1).simbolo.equals("sfalso")) {
 						postFix.remove(postFixIndex);
 						auxToken = postFix.get(postFixIndex - 1);
 						auxToken.simbolo = "variavel booleano";
@@ -349,11 +349,11 @@ public class GeradorCodigo {
 						return false;
 					}
 				} else {
-					if (postFix.get(postFixIndex).simbolo == "sig" || postFix.get(postFixIndex).simbolo == "sdif") {
-						if (postFix.get(postFixIndex - 1).simbolo == "variavel booleano" || postFix.get(postFixIndex - 1).simbolo == "funcao booleano" || postFix.get(postFixIndex - 1).simbolo == "sverdadeiro"
-								|| postFix.get(postFixIndex - 1).simbolo == "sfalso") {
-							if (postFix.get(postFixIndex - 2).simbolo == "variavel booleano" || postFix.get(postFixIndex - 2).simbolo == "funcao booleano" || postFix.get(postFixIndex - 2).simbolo == "sverdadeiro"
-									|| postFix.get(postFixIndex - 2).simbolo == "sfalso") {
+					if (postFix.get(postFixIndex).simbolo.equals("sig") || postFix.get(postFixIndex).simbolo.equals("sdif")) {
+						if (postFix.get(postFixIndex - 1).simbolo.equals("variavel booleano") || postFix.get(postFixIndex - 1).simbolo.equals("funcao booleano") || postFix.get(postFixIndex - 1).simbolo.equals("sverdadeiro")
+								|| postFix.get(postFixIndex - 1).simbolo.equals("sfalso")) {
+							if (postFix.get(postFixIndex - 2).simbolo.equals("variavel booleano") || postFix.get(postFixIndex - 2).simbolo.equals("funcao booleano") || postFix.get(postFixIndex - 2).simbolo.equals("sverdadeiro")
+									|| postFix.get(postFixIndex - 2).simbolo.equals("sfalso")) {
 								postFix.remove(postFixIndex);
 								postFix.remove(postFixIndex - 1);
 								auxToken = postFix.get(postFixIndex - 2);
@@ -363,8 +363,8 @@ public class GeradorCodigo {
 								return false;
 							}
 						} else {
-							if (postFix.get(postFixIndex - 1).simbolo == "variavel inteiro" || postFix.get(postFixIndex - 1).simbolo == "funcao inteiro" || postFix.get(postFixIndex - 1).simbolo == "snumero") {
-								if (postFix.get(postFixIndex - 2).simbolo == "variavel inteiro" || postFix.get(postFixIndex - 2).simbolo == "funcao inteiro" || postFix.get(postFixIndex - 2).simbolo == "snumero") {
+							if (postFix.get(postFixIndex - 1).simbolo.equals("variavel inteiro") || postFix.get(postFixIndex - 1).simbolo.equals("funcao inteiro") || postFix.get(postFixIndex - 1).simbolo.equals("snumero")) {
+								if (postFix.get(postFixIndex - 2).simbolo.equals("variavel inteiro") || postFix.get(postFixIndex - 2).simbolo.equals("funcao inteiro") || postFix.get(postFixIndex - 2).simbolo.equals("snumero")) {
 									postFix.remove(postFixIndex);
 									postFix.remove(postFixIndex - 1);
 									auxToken = postFix.get(postFixIndex - 2);
@@ -378,10 +378,10 @@ public class GeradorCodigo {
 							}
 						}
 					} else {
-						if (postFix.get(postFixIndex).simbolo == "smaior" || postFix.get(postFixIndex).simbolo == "smenor" || postFix.get(postFixIndex).simbolo == "smaiorig"
-						|| postFix.get(postFixIndex).simbolo == "smenorig") {
-							if (postFix.get(postFixIndex - 1).simbolo == "variavel inteiro" || postFix.get(postFixIndex - 1).simbolo == "funcao inteiro" || postFix.get(postFixIndex - 1).simbolo == "snumero") {
-								if (postFix.get(postFixIndex - 2).simbolo == "variavel inteiro" || postFix.get(postFixIndex - 2).simbolo == "funcao inteiro" || postFix.get(postFixIndex - 2).simbolo == "snumero") {
+						if (postFix.get(postFixIndex).simbolo.equals("smaior") || postFix.get(postFixIndex).simbolo.equals("smenor") || postFix.get(postFixIndex).simbolo.equals("smaiorig")
+						|| postFix.get(postFixIndex).simbolo.equals("smenorig")) {
+							if (postFix.get(postFixIndex - 1).simbolo.equals("variavel inteiro") || postFix.get(postFixIndex - 1).simbolo.equals("funcao inteiro") || postFix.get(postFixIndex - 1).simbolo.equals("snumero")) {
+								if (postFix.get(postFixIndex - 2).simbolo.equals("variavel inteiro") || postFix.get(postFixIndex - 2).simbolo.equals("funcao inteiro") || postFix.get(postFixIndex - 2).simbolo.equals("snumero")) {
 									postFix.remove(postFixIndex);
 									postFix.remove(postFixIndex - 1);
 									auxToken = postFix.get(postFixIndex - 2);
@@ -395,7 +395,7 @@ public class GeradorCodigo {
 							}
 						} else {
 							if (postFix.get(postFixIndex).simbolo.equals("smenosunitario") || postFix.get(postFixIndex).simbolo.equals("smaisunitario")) {
-									if (postFix.get(postFixIndex - 1).simbolo == "variavel inteiro" || postFix.get(postFixIndex - 1).simbolo == "funcao inteiro" || postFix.get(postFixIndex - 1).simbolo == "snumero") {
+									if (postFix.get(postFixIndex - 1).simbolo.equals("variavel inteiro") || postFix.get(postFixIndex - 1).simbolo.equals("funcao inteiro") || postFix.get(postFixIndex - 1).simbolo.equals("snumero")) {
 										postFix.remove(postFixIndex);
 										auxToken = postFix.get(postFixIndex - 1);
 										auxToken.simbolo = "variavel inteiro";
@@ -404,10 +404,10 @@ public class GeradorCodigo {
 										return false;
 									}
 							} else {
-								if (postFix.get(postFixIndex).simbolo == "smais" || postFix.get(postFixIndex).simbolo == "smenos"
-								|| postFix.get(postFixIndex).simbolo == "smult" || postFix.get(postFixIndex).simbolo == "sdiv") {
-									if (postFix.get(postFixIndex - 1).simbolo == "variavel inteiro" || postFix.get(postFixIndex - 1).simbolo == "funcao inteiro" || postFix.get(postFixIndex - 1).simbolo == "snumero") {
-										if (postFix.get(postFixIndex - 2).simbolo == "variavel inteiro" || postFix.get(postFixIndex - 2).simbolo == "funcao inteiro" || postFix.get(postFixIndex - 2).simbolo == "snumero") {
+								if (postFix.get(postFixIndex).simbolo.equals("smais") || postFix.get(postFixIndex).simbolo.equals("smenos")
+								|| postFix.get(postFixIndex).simbolo.equals("smult") || postFix.get(postFixIndex).simbolo.equals("sdiv")) {
+									if (postFix.get(postFixIndex - 1).simbolo.equals("variavel inteiro") || postFix.get(postFixIndex - 1).simbolo.equals("funcao inteiro") || postFix.get(postFixIndex - 1).simbolo.equals("snumero")) {
+										if (postFix.get(postFixIndex - 2).simbolo.equals("variavel inteiro") || postFix.get(postFixIndex - 2).simbolo.equals("funcao inteiro") || postFix.get(postFixIndex - 2).simbolo.equals("snumero")) {
 											postFix.remove(postFixIndex);
 											postFix.remove(postFixIndex - 1);
 											auxToken = postFix.get(postFixIndex - 2);
@@ -427,8 +427,8 @@ public class GeradorCodigo {
 			}
 		}
 		postFixIndex = 0;
-		if (postFix.get(postFixIndex).simbolo == "variavel inteiro" || postFix.get(postFixIndex).simbolo == "funcao inteiro"
-				|| postFix.get(postFixIndex).simbolo == "snumero") {
+		if (postFix.get(postFixIndex).simbolo.equals("variavel inteiro") || postFix.get(postFixIndex).simbolo.equals("funcao inteiro")
+				|| postFix.get(postFixIndex).simbolo.equals("snumero")) {
 			return true;	
 		}
 		return false;
