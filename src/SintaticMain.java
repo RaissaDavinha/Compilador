@@ -44,22 +44,7 @@ public class SintaticMain {
 			allocPerFuncProcStack = new ArrayList<Integer>();
 			allocPerFuncProcStack.add(0);
 			procFunDeclaPath = new ArrayList<String>();
-//			 teste lexico
-//			Token lastToken = null;
-//			try {
-//			lastToken = token = analisadorLexico.getToken();
-//			while (token != null) {
-//				if (lastToken.getLinha() < token.getLinha()) {
-//					System.out.print('\n');
-//				}
-//				System.out.print("<" + token.getSimbolo() + "(" + token.getLexema() + ")" + ">");
-//				lastToken = token;
-//				token = analisadorLexico.getToken();
-//				}
-//			} catch (IndexOutOfBoundsException indexError) {
-//				System.out.print(indexError.getMessage());
-//			}
-			
+		
 			rotulo = 0;
 			token = analisadorLexico.getToken();
 			nivelList.add(0);
