@@ -1,5 +1,12 @@
 programa teste; {ERRO inteiros com e logico}
 var x,a,b,c,z:inteiro;
+
+procedimento som; 
+		var i:inteiro; 
+		inicio 
+		 escreva(a)
+		fim; 
+
 inicio
  x:=1;
  a:=2;
@@ -7,9 +14,15 @@ inicio
  c:=7;
  z:=1;
  se x>a  {ERRO inteiros com e}
- entao x
+ entao som
  senao a:=8
 fim.
+
+
+
+
+
+
 
 
 

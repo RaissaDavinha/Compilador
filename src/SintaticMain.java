@@ -155,6 +155,7 @@ public class SintaticMain {
 
 	public static void analisaComandoSimples()
 			throws IOException, SintaticoException, LexicoException, SemanticoException {
+		System.out.println(token);
 		switch (token.simbolo) {
 
 		case "sidentificador":
@@ -312,13 +313,7 @@ public class SintaticMain {
 			}
 
 		} else {
-			System.out.println();
-			if (!tabelaSimbolos.verificaProcFuncDeclarada(token.getLexema(), nivelList)) {
-				chamadaProcedimento();
-			} else {
-				throw new SemanticoException("Erro Semantico do token <" + token.simbolo + "(" + token.lexema + ")>"
-						+ " na linha:" + token.linha + ", coluna:" + token.coluna);
-			}
+			chamadaProcedimento();
 
 		}
 	}
@@ -356,7 +351,7 @@ public class SintaticMain {
 
 			token = analisadorLexico.getToken();
 			analisaComandoSimples();
-			System.out.println("1");
+			System.out.println("1 aaaaaaaaaaaaaa");
 			if (token.simbolo.equals("ssenao")) {
 				System.out.println("2");
 				token = analisadorLexico.getToken();
@@ -876,10 +871,8 @@ public class SintaticMain {
 	}
 
 	public static void chamadaProcedimento() throws SintaticoException, IOException, LexicoException {
-		System.out.println(token.getSimbolo());
-		if (token.simbolo == "sponto_virgula") {
+		if (!tabelaSimbolos.verificaProcFuncDeclarada(token.getLexema(), nivelList)) {
 			// gera codigo call para label do procedimento
-//			System.out.println(token.getLexema());
 			geradorCodigo.geraCall(tabelaSimbolos.returnProcFuncRotulo(auxToken.lexema, nivelList));
 		} else {
 			throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
@@ -894,7 +887,7 @@ public class SintaticMain {
 				|| token.simbolo == "smaiorig" || token.simbolo == "smenor" || token.simbolo == "smenorig"
 				|| token.simbolo == "sig" || token.simbolo == "sdif" || token.simbolo == "se" || token.simbolo == "sou"
 				|| token.simbolo == "sentao" || token.simbolo == "sfaca" || token.simbolo == "sfecha_parenteses"
-				|| token.simbolo == "sfim") {
+				|| token.simbolo == "sfim" || token.getSimbolo() == "ssenao") {
 		} else {
 			throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
 					+ " na linha:" + token.linha + ", coluna:" + token.coluna);
