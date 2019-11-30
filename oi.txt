@@ -1,36 +1,13 @@
-programa teste; {ERRO inteiros com e logico}
+programa teste; {*Teste OK*}
 var x,a,b,c,z:inteiro;
-
-procedimento som; 
-		var i:inteiro; 
-		inicio 
-		 escreva(a)
-		fim; 
-
 inicio
  x:=1;
  a:=2;
  b:=3;
  c:=7;
  z:=1;
- se x>a  {ERRO inteiros com e}
- entao som
- senao a:=8
+ se (x+a*b)>=((b+c)div z)
+ entao escreva(x)
+ senao escreva(a)
 fim.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

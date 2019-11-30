@@ -1,15 +1,15 @@
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class SintaticMain {
+public class Main {
 	static int rotulo;
 	static int variaveisDeclaradas = 0;
 	static Token token = new Token();
 	static Token auxToken = new Token();
 	static AnalisadorLexico analisadorLexico;
 	static GeradorCodigo geradorCodigo;
-	static TabelaSimbolos tabelaSimbolos;
-	static ArrayList<Integer> nivelList;
+	static TabelaSimbolos tabelaSimbolos = new TabelaSimbolos();
+	static ArrayList<Integer> nivelList = new ArrayList<Integer>();
 	static ArrayList<Token> infixList;
 	static ArrayList<Token> postfixList;
 	static int nivelMax = 0;
@@ -23,21 +23,10 @@ public class SintaticMain {
 	static boolean procurandoRetorno = false;
 	static ArrayList<String> seEntaoStack;
 
-	public static void sintaticMain(String file) throws IOException, LexicoException, SintaticoException, SemanticoException {
+	public static void main(String[] args) throws IOException, LexicoException, SintaticoException, SemanticoException {
 
 		try {
-			seEntaoStack = new ArrayList<String>();
-			variaveisDeclaradas = 0;
-			nivelList = new ArrayList<Integer>();
-			tabelaSimbolos = new TabelaSimbolos();
-			token = new Token();
-			infixList = new ArrayList<Token>();
-			postfixList = new ArrayList<Token>();
-			nivelMax = 0;
-			allocIndex = 0;
-			rotuloVariavel = 0;
-			procurandoRetorno = false;
-			analisadorLexico = new AnalisadorLexico(file);
+			analisadorLexico = new AnalisadorLexico("TesteFinal01.txt");
 			geradorCodigo = new GeradorCodigo();
 			procFuncRotuloStack = new ArrayList<Integer>();
 			allocStack = new ArrayList<Integer>();
@@ -88,7 +77,6 @@ public class SintaticMain {
 								allocPerFuncProcStack.remove(allocPerFuncProcStack.size() - 1);
 								geradorCodigo.geraHlt();
 								System.out.print("Compilado com sucesso");
-								IDE.sendToConsole("Compilado com sucesso");
 								geradorCodigo.geraArquivo();
 							} else {
 								throw new SintaticoException(
@@ -361,7 +349,10 @@ public class SintaticMain {
 			analisaComandoSimples();
 			
 			if (token.simbolo == "ssenao") {
+				token = analisadorLexico.getToken();
+				
 				geradorCodigo.geraJmp(rotulo);
+				analisaComandoSimples();
 				auxRot2 = rotulo;
 				rotulo++;
 			}
@@ -862,7 +853,7 @@ public class SintaticMain {
 	}
 
 	public static void chamadaProcedimento() throws SintaticoException, IOException, LexicoException {
-		if (token.simbolo == "sponto_virgula") {
+		if (!tabelaSimbolos.verificaProcFuncDeclarada(token.getLexema(), nivelList)) {
 			// gera codigo call para label do procedimento
 //			System.out.println(token.getLexema());
 			geradorCodigo.geraCall(tabelaSimbolos.returnProcFuncRotulo(auxToken.lexema, nivelList));
@@ -876,8 +867,7 @@ public class SintaticMain {
 		if (token.simbolo == "sponto_virgula" || token.simbolo == "smult" || token.simbolo == "sdiv" || token.simbolo == "smais" 
 				|| token.simbolo == "smenos" || token.simbolo == "smaior" || token.simbolo == "smaiorig" 
 				|| token.simbolo == "smenor" || token.simbolo == "smenorig" || token.simbolo == "sig" 
-				|| token.simbolo == "sdif" || token.simbolo == "se" || token.simbolo == "sou" || token.simbolo == "sentao" 
-				|| token.simbolo == "sfaca" || token.simbolo == "sfecha_parenteses" || token.simbolo == "sfim") {
+				|| token.simbolo == "sdif" || token.simbolo == "se" || token.simbolo == "sou" || token.simbolo == "sentao" || token.simbolo == "sfaca" || token.simbolo == "sfecha_parenteses") {
 		} else {
 			throw new SintaticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
 					+ " na linha:" + token.linha + ", coluna:" + token.coluna);
