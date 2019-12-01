@@ -42,6 +42,17 @@ public class TabelaSimbolos {
 		return false;
 	}
 	
+//	Nivel 2.0
+	public boolean verificaDeclaDuplic(String lexema, int nivel) { // se encontrar declaração de variavel duplicada retorna true
+		for (int i = 0; i < simbolos.size(); i++) {
+			if (simbolos.get(i).getLexema().equals(lexema) && simbolos.get(i).getNivel() == nivel) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	public boolean verificaDeclaDuplicProc(String lexema, ArrayList<Integer> nivelList) { // se encontrar declaração de variavel duplicada retorna true
 		int i = nivelList.size() - 1;
 		int j = 0;
@@ -112,6 +123,17 @@ public class TabelaSimbolos {
 		
 		return false;
 	}
+	
+	public boolean verificaIndentificadorFuncao(String lexema) {
+		for (int i = 0; i < simbolos.size(); i++) {
+			if (simbolos.get(i).getLexema().equals(lexema) && (simbolos.get(i).tipo.equals("funcao booleano") || simbolos.get(i).tipo.equals("funcao inteiro"))) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	public boolean verificaVariavelInteiro(String lexema, ArrayList<Integer> nivelList) {
 		int i = nivelList.size() - 1;
 		int j = 0;
@@ -130,6 +152,39 @@ public class TabelaSimbolos {
 			j = 0;
 			i--;
 		} while (i >= 0);
+		
+		return false;
+	}
+	
+	public boolean verificaVariavelInteiro(String lexema) {
+		for (int i = 0; i < simbolos.size(); i++) {
+			if (simbolos.get(i).getLexema().equals(lexema) && simbolos.get(i).getTipo().equals("variavel inteiro")) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean verificaVariavel(String lexema) {
+//		System.out.println(lexema);
+//		System.out.println(simbolos);
+		for (int i = 0; i < simbolos.size(); i++) {
+			System.out.println(simbolos.get(i));
+			if (simbolos.get(i).getLexema().equals(lexema) && (simbolos.get(i).getTipo().equals("variavel inteiro") || simbolos.get(i).getTipo().equals("variavel booleano"))) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean verificaFuncaoVar(String lexema) {
+		for (int i = 0; i < simbolos.size(); i++) {
+			if (simbolos.get(i).getLexema().equals(lexema) && (simbolos.get(i).getTipo().equals("funcao booleano") || simbolos.get(i).getTipo().equals("funcao inteiro") || simbolos.get(i).getTipo().equals("variavel inteiro") || simbolos.get(i).getTipo().equals("variavel booleano"))) {
+				return true;
+			}
+		}
 		
 		return false;
 	}
@@ -168,6 +223,30 @@ public class TabelaSimbolos {
 		return 0;
 	}
 	
+	public int verificaTipoIndentificador(String lexema) {
+		for (int i = 0; i < simbolos.size(); i++) {
+			if (simbolos.get(i).getLexema().equals(lexema)) {
+				switch (simbolos.get(i).tipo) {
+				case "variavel inteiro":
+				return 1;
+				
+				case "variavel booleano":
+				return 2;
+				
+				case "funcao inteiro":
+				return 3;
+				
+				case "funcao booleano":
+				return 4;
+				
+				default:
+				return 0;
+			}
+			}
+		}
+		return 0;
+	}
+	
 	public boolean verificaDeclaradoTudo(String lexema, ArrayList<Integer> nivelList) { // retorna true se ja estiver declarada
 		int i = nivelList.size() - 1;
 		int j = 0;
@@ -196,6 +275,7 @@ public class TabelaSimbolos {
 			simbolos.set(index, auxSimbolo);
 		}
 	}
+	
 	public int returnVarRotulo(String lexema, ArrayList<Integer> nivelList) {
 		int i = nivelList.size() - 1;
 		int j = 0;
@@ -214,9 +294,10 @@ public class TabelaSimbolos {
 		return 0;
 	}
 	
-	public int returnVarRotulo(String lexema, int nivel) {
+	
+	public int returnVarRotulo(String lexema) {
 		for(int i = 0; i < simbolos.size(); i++) {
-			if (simbolos.get(i).getLexema().equals(lexema) && simbolos.get(i).getNivel() == nivel) {
+			if (simbolos.get(i).getLexema().equals(lexema)) {
 				return simbolos.get(i).rotulo;
 			}
 		}
@@ -246,6 +327,16 @@ public class TabelaSimbolos {
 			j = 0;
 			i--;
 		} while (i >= 0);
+		
+		return 0;
+	}
+	
+	public int returnProcFuncRotulo(String lexema) { // retorna true se ja estiver declarada
+		for (int i = 0; i < simbolos.size(); i++) {
+			if (simbolos.get(i).getLexema().equals(lexema)) {
+				return simbolos.get(i).rotulo;
+			}
+		}
 		
 		return 0;
 	}

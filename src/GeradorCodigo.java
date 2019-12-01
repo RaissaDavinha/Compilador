@@ -521,6 +521,92 @@ public class GeradorCodigo {
 		}
 	}
 	
+	public void geraCodigoDaPosfix(ArrayList<Token> postFixList, TabelaSimbolos tabelaSimbolos) {
+		int postFixIndex = 0;
+		while (postFixIndex < postFix.size()) {
+			switch (postFix.get(postFixIndex).simbolo) {
+				case "funcao booleano":
+				case "funcao inteiro":
+					this.geraCall(tabelaSimbolos.returnProcFuncRotulo(postFix.get(postFixIndex).lexema));
+					break;
+					
+				case "variavel inteiro":
+				case "variavel booleano":
+					this.geraLdv(tabelaSimbolos.returnVarRotulo(postFix.get(postFixIndex).lexema));
+					break;
+					
+				case "snumero":
+					this.geraLdc(postFix.get(postFixIndex).lexema);
+					break;
+				
+				case "sverdadeiro":
+					this.geraLdc("1");
+					break;
+					
+				case "sfalso":
+					this.geraLdc("0");
+					break;
+				
+				case "smenosunitario":
+					this.geraInv();
+						break;
+						
+				case "snao":
+					this.geraNeg();
+					break;
+					
+				case "smult":
+					this.geraMult();
+					break;
+					
+				case "sdiv":
+					this.geraDiv();
+					break;
+					
+				case "smais":
+					this.geraAdd();;
+					break;
+					
+				case "smenos":
+					this.geraSub();
+					break;
+					
+				case "smaior":
+					this.geraCma();
+					break;
+					
+				case "smenor":
+					this.geraCme();
+					break;
+					
+				case "smaiorig":
+					this.geraCmaq();
+					break;
+					
+				case "smenorig":
+					this.geraCmeq();
+					break;
+					
+				case "sig":
+					this.geraCeq();
+					break;
+					
+				case "sdif":
+					this.geraCdif();
+					break;
+					
+				case "se":
+					this.geraAnd();
+					break;
+					
+				case "sou":
+					this.geraOr();
+					break;
+			}
+			postFixIndex++;
+		}
+	}
+	
 	public void geraArquivo() throws IOException {
 		FileWriter fileWriter = new FileWriter("object.txt");
 		String fileContent = "This is a sample text.";
