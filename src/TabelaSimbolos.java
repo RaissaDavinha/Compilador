@@ -296,7 +296,7 @@ public class TabelaSimbolos {
 	
 	
 	public int returnVarRotulo(String lexema) {
-		for(int i = 0; i < simbolos.size(); i++) {
+		for(int i = simbolos.size() - 1; i >= 0; i--) {
 			if (simbolos.get(i).getLexema().equals(lexema)) {
 				return simbolos.get(i).rotulo;
 			}
@@ -307,7 +307,7 @@ public class TabelaSimbolos {
 	
 	public void limpaNivel(int nivel) {
 		for(int i = simbolos.size() - 1; i >= 0; i--) {
-			if (simbolos.get(i).getNivel() >= nivel) {
+			if (simbolos.get(i).getNivel() == nivel) {
 				simbolos.remove(i);
 			}
 		}

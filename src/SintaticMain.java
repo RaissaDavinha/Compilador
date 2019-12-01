@@ -644,7 +644,7 @@ public class SintaticMain {
 	public static void analisaVariaveis() throws SintaticoException, SemanticoException, IOException, LexicoException {
 		do {
 			if (token.simbolo == "sidentificador") {
-				if (!tabelaSimbolos.verificaDeclaDuplic(token.lexema, nivel)) {
+				if (!tabelaSimbolos.verificaDeclaDuplic(token.lexema, nivelList.get(nivelList.size() - 1))) {
 					tabelaSimbolos.insereTabela(token.lexema, "variavel", nivel, rotuloVariavel++);
 					variaveisDeclaradas++;
 					token = analisadorLexico.getToken();
@@ -743,7 +743,7 @@ public class SintaticMain {
 
 		if (token.simbolo == "sidentificador") {
 			// pesquisa_declproc_tabela(token.lexema)
-			if (!tabelaSimbolos.verificaDeclaDuplic(token.lexema, nivel)) {
+			if (!tabelaSimbolos.verificaDeclaDuplic(token.lexema, nivelList.get(nivelList.size() - 1))) {
 				// se nao encontrou
 				
 				
@@ -769,7 +769,7 @@ public class SintaticMain {
 						for (int dallocIndex = allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex > 0; dallocIndex--) {
 							geradorCodigo.geraDalloc(allocStack.get(allocStack.size() - 2), allocStack.get(allocStack.size() - 1));
 							auxVar = allocStack.remove(allocStack.size() - 1);
-							allocStack.remove(allocStack.size() - 1);
+							rotuloVariavel = allocStack.remove(allocStack.size() - 1);
 							allocIndex = allocIndex - auxVar;
 						}
 					}
@@ -780,7 +780,7 @@ public class SintaticMain {
 							+ " na linha:" + token.linha + ", coluna:" + token.coluna);
 				}
 			} else {
-				throw new SemanticoException("Erro Sintatico do token <" + token.simbolo + "(" + token.lexema + ")>"
+				throw new SemanticoException("Erro Semantico do token <" + token.simbolo + "(" + token.lexema + ")>"
 						+ " na linha:" + token.linha + ", coluna:" + token.coluna);
 			}
 		} else {
@@ -789,6 +789,7 @@ public class SintaticMain {
 		}
 		// DESEMPILHA OU VOLTA NIVEL
 		tabelaSimbolos.limpaNivel(nivel);
+		
 		nivelList.remove(nivelList.size() - 1);
 		nivel--;
 	}
@@ -802,7 +803,7 @@ public class SintaticMain {
 		
 		if (token.simbolo == "sidentificador") {
 			// pesquisa_declfunc_tabela(token.lexema) se tem identificador duplicado
-			if (!tabelaSimbolos.verificaDeclaDuplic(token.simbolo, nivel)) {
+			if (!tabelaSimbolos.verificaDeclaDuplic(token.simbolo, nivelList.get(nivelList.size() - 1))) {
 				// se nao encontrou
 				procFunDeclaPath.add("sfuncao");
 				// insere_tabela
@@ -840,7 +841,7 @@ public class SintaticMain {
 							if (allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1) > 0) {
 								for (int dallocIndex = allocPerFuncProcStack.get(allocPerFuncProcStack.size() - 1); dallocIndex > 0; dallocIndex--) {
 									auxVar = allocStack.remove(allocStack.size() - 1);
-									allocStack.remove(allocStack.size() - 1);
+									rotuloVariavel = allocStack.remove(allocStack.size() - 1);
 									allocIndex = allocIndex - auxVar;
 								}
 							}
@@ -869,7 +870,7 @@ public class SintaticMain {
 	}
 
 	public static void chamadaProcedimento() throws SintaticoException, IOException, LexicoException {
-		if (!tabelaSimbolos.verificaDeclaDuplic(token.getLexema(), nivel)) {
+		if (!tabelaSimbolos.verificaDeclaDuplic(token.getLexema(), nivelList.get(nivelList.size() - 1))) {
 			// gera codigo call para label do procedimento
 //			System.out.println(token.getLexema());
 			geradorCodigo.geraCall(tabelaSimbolos.returnProcFuncRotulo(auxToken.lexema));
