@@ -173,7 +173,7 @@ public class TabelaSimbolos {
 		int j = 0;
 		do {
 			while (j < simbolos.size()) {
-				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && !simbolos.get(j).tipo.equals("nomedeprograma") && !simbolos.get(j).tipo.equals("procedimento")) {
+				if (simbolos.get(j).nivel <= nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && !simbolos.get(j).tipo.equals("nomedeprograma") && !simbolos.get(j).tipo.equals("procedimento")) {
 					return true;
 				} else {
 					j++;
@@ -213,6 +213,25 @@ public class TabelaSimbolos {
 		
 		return 0;
 	}
+	
+	public int returnVarRotulo(String lexema, int nivel) {
+		for(int i = 0; i < simbolos.size(); i++) {
+			if (simbolos.get(i).getLexema().equals(lexema) && simbolos.get(i).getNivel() == nivel) {
+				return simbolos.get(i).rotulo;
+			}
+		}
+		
+		return 0;
+	}
+	
+	public void limpaNivel(int nivel) {
+		for(int i = simbolos.size() - 1; i >= 0; i--) {
+			if (simbolos.get(i).getNivel() >= nivel) {
+				simbolos.remove(i);
+			}
+		}
+	}
+	
 	public int returnProcFuncRotulo(String lexema, ArrayList<Integer> nivelList) { // retorna true se ja estiver declarada
 		int i = nivelList.size() - 1;
 		int j = 0;
