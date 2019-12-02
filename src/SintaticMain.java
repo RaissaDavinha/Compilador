@@ -166,6 +166,9 @@ public class SintaticMain {
 			break;
 
 		case "senquanto":
+			if (procurandoRetorno == true) {
+				seEntaoStack.add("sseN");
+			}
 			analisaEnquanto();
 			break;
 
@@ -432,6 +435,10 @@ public class SintaticMain {
 		geradorCodigo.geraCodigoDaPosfix(postfixList, tabelaSimbolos);
 		
 		if (token.simbolo == "sfaca") {
+			if (procurandoRetorno == true) {
+				seEntaoStack.add("senquantoN");
+			}
+			
 			// auxrot2 := rotulo
 			auxrot2 = rotulo;
 			
@@ -443,6 +450,13 @@ public class SintaticMain {
 			
 			token = analisadorLexico.getToken();
 			analisaComandoSimples();
+			
+			if (procurandoRetorno == true) {
+				if (seEntaoStack.get(seEntaoStack.size() - 1).equals("senquantoS")) {
+					seEntaoStack.remove(seEntaoStack.size() - 1);
+					seEntaoStack.set(seEntaoStack.size() - 1, seEntaoStack.get(seEntaoStack.size() - 1).substring(0,seEntaoStack.get(seEntaoStack.size() - 1).length() - 1) + "S");
+				}
+			}
 			
 			// Gera('', JMPF,auxrot1,'') {retorna ao inicio loop}
 			geradorCodigo.geraJmp(auxrot1);
