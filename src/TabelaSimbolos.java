@@ -15,255 +15,102 @@ public class TabelaSimbolos {
 		stackPointer++;
 	}
 
-	public boolean verificaDeclaDuplicVar(String lexema, ArrayList<Integer> nivelList) { // se encontrar declaração de variavel duplicada retorna true
-		int i = nivelList.size() - 1;
-		int j = 0;
-		
-		while (j < simbolos.size()) {
-			if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && (simbolos.get(j).tipo.equals("variavel inteiro") || simbolos.get(j).tipo.equals("variavel booleano"))) {
-				return true;
+	public boolean verificaDeclaDuplicVar(String lexema) { // se encontrar declaração de variavel duplicada retorna true
+		for (int i = simbolos.size() - 1; i >= 0; i--) {
+			if (simbolos.get(i).tipo.contains("variavel")) {
+				if (simbolos.get(i).lexema.equals(lexema)) {
+					return true;
+				}
 			} else {
-				j++;
+				return false;
 			}
 		}
-		j = 0;
-		do {
-			while (j < simbolos.size()) {
-				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && !simbolos.get(j).tipo.equals("variavel inteiro") && !simbolos.get(j).tipo.equals("variavel booleano")) {
-					return true;
-				} else {
-					j++;
-				}
-			}
-			j = 0;
-			i--;
-		} while (i >= 0);
-		
 		return false;
 	}
 	
-//	Nivel 2.0
-	public boolean verificaDeclaDuplic(String lexema, int nivel) { // se encontrar declaração de variavel duplicada retorna true
-		for (int i = 0; i < simbolos.size(); i++) {
-			if (simbolos.get(i).getLexema().equals(lexema) && simbolos.get(i).getNivel() == nivel) {
+	public boolean verificaVarDeclarada(String lexema) { // retorna true se ja estiver declarada
+		for (int i = simbolos.size() - 1; i >= 0; i--) {
+			if (simbolos.get(i).tipo.contains("variavel")) {
+				if (simbolos.get(i).lexema.equals(lexema)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean verificaDeclaDuplic(String lexema) { // se encontrar declaração de variavel duplicada retorna true
+		for (int i = simbolos.size() - 1; i >= 0; i--) {
+			if (simbolos.get(i).getLexema().equals(lexema)) {
 				return true;
 			}
 		}
-		
 		return false;
 	}
 	
-	public boolean verificaDeclaDuplicProc(String lexema, ArrayList<Integer> nivelList) { // se encontrar declaração de variavel duplicada retorna true
-		int i = nivelList.size() - 1;
-		int j = 0;
-		
-		do {
-			while (j < simbolos.size()) {
-				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema)) {
-					return true;
-				} else {
-					j++;
-				}
-			}
-			j = 0;
-			i--;
-		} while (i >= 0);
-		
-		return false;
-	}
 	
-	public boolean verificaVarDeclarada(String lexema, ArrayList<Integer> nivelList) { // retorna true se ja estiver declarada
-		int i = nivelList.size() - 1;
-		int j = 0;
-		do {
-			while (j < simbolos.size()) {
-				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && (simbolos.get(j).tipo.equals("variavel inteiro") || simbolos.get(j).tipo.equals("variavel booleano"))) {
+
+	public boolean verificaProcDeclarada(String lexema) { // retorna true se ja estiver declarada
+		for (int i = simbolos.size() - 1; i >= 0; i--) {
+			if (simbolos.get(i).tipo.contains("proc")) {
+				if (simbolos.get(i).lexema.equals(lexema)) {
 					return true;
-				} else {
-					j++;
 				}
-			}
-			j = 0;
-			i--;
-		} while (i >= 0);
-		
-		return false;
-	}
-	public boolean verificaProcFuncDeclarada(String lexema, ArrayList<Integer> nivelList) { // retorna true se ja estiver declarada
-		int i = nivelList.size() - 1;
-		int j = 0;
-		do {
-			while (j < simbolos.size()) {
-				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && !simbolos.get(j).tipo.equals("variavel inteiro") && !simbolos.get(j).tipo.equals("variavel booleano") && !simbolos.get(j).tipo.equals("nomedeprograma")) {
-					return true;
-				} else {
-					j++;
-				}
-			}
-			j = 0;
-			i--;
-		} while (i >= 0);
-		
-		return false;
-	}
-	public boolean verificaIndentificadorFuncao(String lexema, ArrayList<Integer> nivelList) {
-		int i = nivelList.size() - 1;
-		int j = 0;
-		do {
-			while (j < simbolos.size()) {
-				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && (simbolos.get(j).tipo.equals("funcao booleano") || simbolos.get(j).tipo.equals("funcao inteiro"))) {
-					return true;
-				} else {
-					j++;
-				}
-			}
-			j = 0;
-			i--;
-		} while (i >= 0);
-		
-		return false;
-	}
-	
-	public boolean verificaIndentificadorFuncao(String lexema) {
-		for (int i = 0; i < simbolos.size(); i++) {
-			if (simbolos.get(i).getLexema().equals(lexema) && (simbolos.get(i).tipo.equals("funcao booleano") || simbolos.get(i).tipo.equals("funcao inteiro"))) {
-				return true;
 			}
 		}
-		
 		return false;
 	}
 	
-	public boolean verificaVariavelInteiro(String lexema, ArrayList<Integer> nivelList) {
-		int i = nivelList.size() - 1;
-		int j = 0;
-		do {
-			while (j < simbolos.size()) {
-				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && simbolos.get(j).tipo.contains("variavel")) {
-					if (simbolos.get(j).tipo.equals("variavel inteiro")) {
-						return true;
-					} else {
-						return false;
-					}
-				} else {
-					j++;
+
+	public boolean verificaFuncDeclarada(String lexema) { // retorna true se ja estiver declarada
+		for (int i = simbolos.size() - 1; i >= 0; i--) {
+			if (simbolos.get(i).tipo.contains("funcao")) {
+				if (simbolos.get(i).lexema.equals(lexema)) {
+					return true;
 				}
 			}
-			j = 0;
-			i--;
-		} while (i >= 0);
-		
-		return false;
-	}
-	
-	public boolean verificaVariavelInteiro(String lexema) {
-		for (int i = 0; i < simbolos.size(); i++) {
-			if (simbolos.get(i).getLexema().equals(lexema) && simbolos.get(i).getTipo().equals("variavel inteiro")) {
-				return true;
-			}
 		}
-		
 		return false;
 	}
+
 	
-	public boolean verificaVariavel(String lexema) {
-//		System.out.println(lexema);
-//		System.out.println(simbolos);
-		for (int i = 0; i < simbolos.size(); i++) {
-			System.out.println(simbolos.get(i));
-			if (simbolos.get(i).getLexema().equals(lexema) && (simbolos.get(i).getTipo().equals("variavel inteiro") || simbolos.get(i).getTipo().equals("variavel booleano"))) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
 	
 	public boolean verificaFuncaoVar(String lexema) {
-		for (int i = 0; i < simbolos.size(); i++) {
+		for (int i = simbolos.size() - 1; i >= 0 ; i--) {
 			if (simbolos.get(i).getLexema().equals(lexema) && (simbolos.get(i).getTipo().equals("funcao booleano") || simbolos.get(i).getTipo().equals("funcao inteiro") || simbolos.get(i).getTipo().equals("variavel inteiro") || simbolos.get(i).getTipo().equals("variavel booleano"))) {
 				return true;
 			}
 		}
-		
 		return false;
 	}
 	
-	public int verificaTipoIndentificador(String lexema, ArrayList<Integer> nivelList) {
-		int i = nivelList.size() - 1;
-		int j = 0;
-		do {
-			while (j < simbolos.size()) {
-				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema)) {
-					switch (simbolos.get(j).tipo) {
-						case "variavel inteiro":
-						return 1;
-						
-						case "variavel booleano":
-						return 2;
-						
-						case "funcao inteiro":
-						return 3;
-						
-						case "funcao booleano":
-						return 4;
-						
-						default:
-						return 0;
-					}
-				
-				} else {
-					j++;
-				}
-			}
-			j = 0;
-			i--;
-		} while (i >= 0);
-		
-		return 0;
-	}
-	
 	public int verificaTipoIndentificador(String lexema) {
-		for (int i = 0; i < simbolos.size(); i++) {
-			if (simbolos.get(i).getLexema().equals(lexema)) {
-				switch (simbolos.get(i).tipo) {
-				case "variavel inteiro":
-				return 1;
-				
-				case "variavel booleano":
-				return 2;
-				
-				case "funcao inteiro":
-				return 3;
-				
-				case "funcao booleano":
-				return 4;
-				
-				default:
-				return 0;
-			}
+		int j = simbolos.size() - 1;
+		while (j >= 0) {
+			if (lexema.equals(simbolos.get(j).lexema)) {
+				switch (simbolos.get(j).tipo) {
+					case "variavel inteiro":
+					return 1;
+					
+					case "variavel booleano":
+					return 2;
+					
+					case "funcao inteiro":
+					return 3;
+					
+					case "funcao booleano":
+					return 4;
+					
+					default:
+					return 0;
+				}
+			} else {
+				j--;
 			}
 		}
 		return 0;
 	}
 	
-	public boolean verificaDeclaradoTudo(String lexema, ArrayList<Integer> nivelList) { // retorna true se ja estiver declarada
-		int i = nivelList.size() - 1;
-		int j = 0;
-		do {
-			while (j < simbolos.size()) {
-				if (simbolos.get(j).nivel <= nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && !simbolos.get(j).tipo.equals("nomedeprograma") && !simbolos.get(j).tipo.equals("procedimento")) {
-					return true;
-				} else {
-					j++;
-				}
-			}
-			j = 0;
-			i--;
-		} while (i >= 0);
-		
-		return false;
-	}
 	
 	public void colocaTipo(String tipo, int count) { // tipo = "variavel inteiro" ou  "variavel booleano"
 		int index = simbolos.size() - 1;
@@ -276,26 +123,9 @@ public class TabelaSimbolos {
 		}
 	}
 	
-	public int returnVarRotulo(String lexema, ArrayList<Integer> nivelList) {
-		int i = nivelList.size() - 1;
-		int j = 0;
-		do {
-			while (j < simbolos.size()) {
-				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && (simbolos.get(j).tipo.equals("variavel inteiro") || simbolos.get(j).tipo.equals("variavel booleano"))) {
-					return simbolos.get(j).rotulo;
-				} else {
-					j++;
-				}
-			}
-			j = 0;
-			i--;
-		} while (i >= 0);
-		
-		return 0;
-	}
+
 	
-	
-	public int returnVarRotulo(String lexema) {
+	public int returnRotulo(String lexema) {
 		for(int i = simbolos.size() - 1; i >= 0; i--) {
 			if (simbolos.get(i).getLexema().equals(lexema)) {
 				return simbolos.get(i).rotulo;
@@ -312,33 +142,6 @@ public class TabelaSimbolos {
 			}
 		}
 	}
-	
-	public int returnProcFuncRotulo(String lexema, ArrayList<Integer> nivelList) { // retorna true se ja estiver declarada
-		int i = nivelList.size() - 1;
-		int j = 0;
-		do {
-			while (j < simbolos.size()) {
-				if (simbolos.get(j).nivel == nivelList.get(i) && lexema.equals(simbolos.get(j).lexema) && !simbolos.get(j).tipo.equals("variavel inteiro") && !simbolos.get(j).tipo.equals("variavel booleano") && !simbolos.get(j).tipo.equals("nomedeprograma")) {
-					return simbolos.get(j).rotulo;
-				} else {
-					j++;
-				}
-			}
-			j = 0;
-			i--;
-		} while (i >= 0);
-		
-		return 0;
-	}
-	
-	public int returnProcFuncRotulo(String lexema) { // retorna true se ja estiver declarada
-		for (int i = 0; i < simbolos.size(); i++) {
-			if (simbolos.get(i).getLexema().equals(lexema)) {
-				return simbolos.get(i).rotulo;
-			}
-		}
-		
-		return 0;
-	}
+
 
 }

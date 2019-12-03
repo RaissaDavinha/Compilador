@@ -13,31 +13,7 @@ public class GeradorCodigo {
 		postFix = new ArrayList<Token>();
 		postfixStack = new ArrayList<Token>();
 		int infixIndex = 0;
-
 		while (infixIndex < infix.size()) {
-			if (infix.get(infixIndex).simbolo.equals("snao")) {
-				if (infixIndex == 0) {
-					postfixStack.add(infix.get(infixIndex));
-				} else {
-					while (postfixStack.size() > 0) {
-						if (infixIndex >= infix.size()) {
-							
-						}
-						if (postfixStack.get(postfixStack.size() - 1).simbolo.equals("sabre_parenteses")) {
-							postfixStack.add(infix.get(infixIndex));
-							break;
-						}
-						if (postOperand(infix.get(infixIndex)) <= postOperand(postfixStack.get(postfixStack.size() - 1))) {
-							postFix.add(postfixStack.get(postfixStack.size() - 1));
-							postfixStack.remove(postfixStack.size() - 1);
-						} else {
-							postfixStack.add(infix.get(infixIndex));
-							break;
-						}
-					}
-				}
-				
-			} else {
 				if (infix.get(infixIndex).simbolo.equals("smenos") || infix.get(infixIndex).simbolo.equals("smais")) {
 					if (infixIndex == 0) {
 						infix.get(infixIndex).simbolo += "unitario";
@@ -61,7 +37,7 @@ public class GeradorCodigo {
 									while (postfixStack.size() > 0) {
 										if (postfixStack.get(postfixStack.size() - 1).simbolo.equals("sabre_parenteses")) {
 											break;
-										}
+										} //  
 										if (postOperand(infix.get(infixIndex)) <= postOperand(postfixStack.get(postfixStack.size() - 1))) {
 											postFix.add(postfixStack.get(postfixStack.size() - 1));
 											postfixStack.remove(postfixStack.size() - 1);
@@ -76,35 +52,7 @@ public class GeradorCodigo {
 							}
 						}
 					}
-				} else {
-					if (infix.get(infixIndex).simbolo.contentEquals("smult") || infix.get(infixIndex).simbolo.equals("sdiv")) {
-						if (postfixStack.size() <= 0) {
-							postfixStack.add(infix.get(infixIndex));
-						} else {
-							if (postfixStack.get(postfixStack.size() - 1).simbolo.equals("sabre_parenteses")) {
-								postfixStack.add(infix.get(infixIndex));
-							} else {
-								if (postOperand(infix.get(infixIndex)) <= postOperand(postfixStack.get(postfixStack.size() - 1))) {
-									postFix.add(postfixStack.get(postfixStack.size() - 1));
-									postfixStack.remove(postfixStack.size() - 1);
-									while (postfixStack.size() > 0) {
-										if (postfixStack.get(postfixStack.size() - 1).simbolo.equals("sabre_parenteses")) {
-											break;
-										}
-										if (postOperand(infix.get(infixIndex)) <= postOperand(postfixStack.get(postfixStack.size() - 1))) {
-											postFix.add(postfixStack.get(postfixStack.size() - 1));
-											postfixStack.remove(postfixStack.size() - 1);
-										} else {
-											break;
-										}
-									}
-									postfixStack.add(infix.get(infixIndex));
-								} else {
-									postfixStack.add(infix.get(infixIndex));
-								}
-							}
-						}
-					} else {
+				} else  {
 						if (infix.get(infixIndex).simbolo.equals("variavel inteiro") || infix.get(infixIndex).simbolo.equals("variavel booleano") || infix.get(infixIndex).simbolo.equals("snumero")
 								|| infix.get(infixIndex).simbolo.equals("funcao booleano") || infix.get(infixIndex).simbolo.equals("funcao inteiro") || infix.get(infixIndex).simbolo.equals("sverdadeiro")
 								|| infix.get(infixIndex).simbolo.equals("sfalso")) {
@@ -147,12 +95,9 @@ public class GeradorCodigo {
 										}
 									}
 								}
-							}
-						}
-					}
-					
+							}			
+					}	
 				}
-			}
 			infixIndex++;
 		}
 		while (postfixStack.size() > 0) {
@@ -435,91 +380,6 @@ public class GeradorCodigo {
 	}
 
 	
-	public void geraCodigoDaPosfix(ArrayList<Token> postFixList, TabelaSimbolos tabelaSimbolos, ArrayList<Integer> nivelList) {
-		int postFixIndex = 0;
-		while (postFixIndex < postFix.size()) {
-			switch (postFix.get(postFixIndex).simbolo) {
-				case "funcao booleano":
-				case "funcao inteiro":
-					this.geraCall(tabelaSimbolos.returnProcFuncRotulo(postFix.get(postFixIndex).lexema, nivelList));
-					break;
-					
-				case "variavel inteiro":
-				case "variavel booleano":
-					this.geraLdv(tabelaSimbolos.returnVarRotulo(postFix.get(postFixIndex).lexema, nivelList));
-					break;
-					
-				case "snumero":
-					this.geraLdc(postFix.get(postFixIndex).lexema);
-					break;
-				
-				case "sverdadeiro":
-					this.geraLdc("1");
-					break;
-					
-				case "sfalso":
-					this.geraLdc("0");
-					break;
-				
-				case "smenosunitario":
-					this.geraInv();
-						break;
-						
-				case "snao":
-					this.geraNeg();
-					break;
-					
-				case "smult":
-					this.geraMult();
-					break;
-					
-				case "sdiv":
-					this.geraDiv();
-					break;
-					
-				case "smais":
-					this.geraAdd();;
-					break;
-					
-				case "smenos":
-					this.geraSub();
-					break;
-					
-				case "smaior":
-					this.geraCma();
-					break;
-					
-				case "smenor":
-					this.geraCme();
-					break;
-					
-				case "smaiorig":
-					this.geraCmaq();
-					break;
-					
-				case "smenorig":
-					this.geraCmeq();
-					break;
-					
-				case "sig":
-					this.geraCeq();
-					break;
-					
-				case "sdif":
-					this.geraCdif();
-					break;
-					
-				case "se":
-					this.geraAnd();
-					break;
-					
-				case "sou":
-					this.geraOr();
-					break;
-			}
-			postFixIndex++;
-		}
-	}
 	
 	public void geraCodigoDaPosfix(ArrayList<Token> postFixList, TabelaSimbolos tabelaSimbolos) {
 		int postFixIndex = 0;
@@ -527,12 +387,12 @@ public class GeradorCodigo {
 			switch (postFix.get(postFixIndex).simbolo) {
 				case "funcao booleano":
 				case "funcao inteiro":
-					this.geraCall(tabelaSimbolos.returnProcFuncRotulo(postFix.get(postFixIndex).lexema));
+					this.geraCall(tabelaSimbolos.returnRotulo(postFix.get(postFixIndex).lexema));
 					break;
 					
 				case "variavel inteiro":
 				case "variavel booleano":
-					this.geraLdv(tabelaSimbolos.returnVarRotulo(postFix.get(postFixIndex).lexema));
+					this.geraLdv(tabelaSimbolos.returnRotulo(postFix.get(postFixIndex).lexema));
 					break;
 					
 				case "snumero":
